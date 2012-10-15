@@ -1,0 +1,86 @@
+Conestoga College - Integrated Telecommunications and Computer Technologies (ITCT)
+Year 2 - Project 2
+Coded Messaging System - Referred to as Paging System
+Alan Cranbury and Mark Mahony
+
+The coded messaging project involves the development of a PC-based texting and paging intercom system for offices where several people need to be left individual messages from a central location - for example, the hallway outside of a room of college professors’ cubicles or prison inmate cells.   
+
+The system also supports the broadcast of a high-priority audio message to all stations.  
+
+The system runs over RS-232 and household quality wiring, and data robustness and compression techniques are employed to guarantee accurate text messages, and achieve the maximum throughput with an acceptable signal to noise ratio for the audio broadcast.
+
+Requirements:
+MUSTS (These MUST be present)
+1.	The Messaging System will be implemented using Windows PCs as the main paging station and receiving stations.   
+	1.1.	There will be one main paging station, called the home station.
+	1.2.	There will be n receiving stations.  For testing purposes n may be 1, however a goal of this project is to connect stations from all groups. 
+
+2.	All stations are connected in a line, on a single bus.
+	2.1.	Communication will be via household wiring.  All stations are connected together on a single wire. It is assumed that there are no impediments between the stations. 
+		2.1.1.	A safe testing rig will be provided. Under no circumstances are you to connect the project to the AC Mains!
+	2.2.	All stations have an opportunity to receive all messages, however software and/or digital logic must restrict each station to handling only messages for that station, and broadcasts. 
+
+3.	The home station runs custom software, written in C, with a basic user interface that allows the operator to compose, record, and transmit messages. 
+	3.1.	The home station has a selector, which chooses the target receiving station. 
+	3.2.	The user can compose a short text message (140 characters) and enter their own sender ID (1 or 2 bytes), a receiver identifier (1 or 2 bytes), and a message priority (0-7), which will then be transmitted to the target station.  
+	3.3.	The message will also include a header, containing (among other things) the above items and a message identifier which is generated automatically by the software. 
+
+4.	The receiving station software will manage text messages as follows:
+	4.1.	Receiver must periodically check for new messages, and report the number of messages waiting. 
+	4.2.	Received messages will be stored in a FIFO queue
+	4.3.	Received messages will also be accessible in priority order
+	4.4.	A binary search tree will be used to create a database of senders (a phonebook), to count the number of text messages coming from each sender, and record the date and time of the most recently received message.  
+		4.4.1.	The complete phonebook must survive restarts of the software. 
+	4.5.	The program (in C) must contain a user interface which must allow commands to (as a minimum):
+		4.5.1.	List (tersely) the messages in the queue, one line per message, in order of arrival
+		4.5.2.	Display the complete message at the front of the queue, including the header information
+		4.5.3.	Remove the message at the font of the queue, updating the list. 
+		4.5.4.	List (tersely) the messages in priority order
+		4.5.5.	Show the phonebook, including counts and dates
+		4.5.6.	Display all information in an appropriate and pleasing manner.  
+
+5.	The user can also activate the home station to record a fixed length message of k seconds duration, where k is at least 10. 
+	5.1.	The message will then be transmitted and reproduced on all stations. 
+	5.2.	The system must incorporate data compression techniques, to reduce transmission times, on the broadcast message. 
+		5.2.1.	The receiving software must be able to dynamically determine the compression method in use, and react accordingly
+	5.3.	The audio message will be reproduced with an acceptable signal to noise ratio, to be determined given the target environment
+	5.4.	The message will be reproduced on all stations within 15 seconds of the broadcast being initiated
+
+6.	The system will incorporate error detection and correction software, so that the intercom functions in an electrically noisy environment
+	6.1.	Error detection is required on all transmissions.
+
+7.	The system will incorporate a hardware message identification and validation circuit, implemented using digital design techniques.  Additional duties of this circuit will be identified in class, but might include such things as locating the beginning of a transmission, or detecting errors in the message.
+
+8.	The system will incorporate testing and diagnostic functions.  
+	8.1.	For example, it must be possible to perform a test recording and test playback, to turn compression off and on, and so on. 
+
+SHOULDS (These SHOULD be present, but are not required for minimal project.)
+1.	The system is designed to work over live (60 Hz, 110 V) AC wiring.  This will require the addition of an analog front end (AFE) with optical isolation. 
+2.	A text broadcast mode will allow all receivers to receive the same text message. 
+3.	Errors detected are reported on the screen of the receiving station. 
+4.	Every text message will be stored on the receiving intercom system, and can pre-load the message queue when the program is restarted.  The messages must be compressed when stored to use a minimal amount of space.  
+5.	Audio messages can be played back at a later time. 
+6.	Especially robust error handling is provided for the packet administration (header) information. 
+
+COULDS
+1.	Broadcast audio messages begin playback on the receiving station as soon as any part of the message has arrived. 
+2.	The system can be stopped and restarted without loss of any information. 
+3.	The sender may enter the name of the receiver (and/or herself), and a hash function is used to convert this to a numerical ID (collisions are not allowed).  The list of names is loaded from a text file and should be checked for collisions. 
+4.	A receiver can be configured to respond to more than one page address (for example, to allow a secretary to monitor messages for several people).  
+5.	Conversely, more than one receiver may be configured to the same address (to message to multiple sets).
+6.	Information about transmission speeds, station addresses, etc. could be stored in a configuration file. 
+7.	Messages and/or audio are encrypted with a “weak” algorithm such as ROT13 or an XOR (exclusive OR) cipher.  
+
+WONT’S (this version)
+1.	Messages may be sent between intercom stations 
+2.	Data will be re-transmitted if errors are detected which cannot be corrected.
+3.	Transmission of broadcast audio begins as soon as part of the audio is recorded.
+
+Some Inferences of this specification.
+•	Communication is digital 
+•	Messages are "packetized" or "framed", with error detection and correction techniques applied to packets.
+•	Audio messages are compressed to take up less bandwidth and allow higher digitization rates, and to shorted the broadcast transmission time 
+•	Voice messages do not require a high S/N. 
+•	Each message must contain an address field, which must be very robust.
+•	Errors in the address field are deadly, and should be handled as special cases.
+•	The better compression and correction achieved, the better the results. 
