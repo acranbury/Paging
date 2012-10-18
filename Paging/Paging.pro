@@ -14,11 +14,13 @@ SOURCES += main.cpp \
     senderwindow.cpp \
     receiverwindow.cpp \
     Playback.cpp \
-    heappriority.c
+    heappriority.c \
+    rs232.cpp
 
 HEADERS  += senderwindow.h \
     receiverwindow.h \
-    playback.h
+    playback.h \
+    rs232.h
 
 FORMS    += senderwindow.ui \
     receiverwindow.ui

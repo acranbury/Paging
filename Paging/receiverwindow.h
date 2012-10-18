@@ -2,6 +2,8 @@
 #define RECEIVERWINDOW_H
 
 #include <QMainWindow>
+#include <Windows.h>
+
 
 namespace Ui {
 class ReceiverWindow;
@@ -22,6 +24,7 @@ protected slots:
 
 private:
     Ui::ReceiverWindow *ui;
+    void ReadRS232(HANDLE hComm);
 };
 
 #endif // RECEIVERWINDOW_H

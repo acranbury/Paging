@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'senderwindow.ui'
 **
-** Created: Wed Oct 17 08:59:11 2012
+** Created: Thu Oct 18 17:03:12 2012
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -137,8 +137,24 @@ public:
         receiverIdLbl->setText(QApplication::translate("SenderWindow", "Receiver ID", 0, QApplication::UnicodeUTF8));
         addSenderBtn->setText(QApplication::translate("SenderWindow", "Add Sender", 0, QApplication::UnicodeUTF8));
         addReceiverBtn->setText(QApplication::translate("SenderWindow", "Add Receiver", 0, QApplication::UnicodeUTF8));
+        sampleCmb->clear();
+        sampleCmb->insertItems(0, QStringList()
+         << QApplication::translate("SenderWindow", "4000", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "8000", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "16000", 0, QApplication::UnicodeUTF8)
+        );
         brdSampleLbl->setText(QApplication::translate("SenderWindow", "Sampling Rate", 0, QApplication::UnicodeUTF8));
         baudRateLbl->setText(QApplication::translate("SenderWindow", "Baud Rate", 0, QApplication::UnicodeUTF8));
+        baudRateCmb->clear();
+        baudRateCmb->insertItems(0, QStringList()
+         << QApplication::translate("SenderWindow", "2400", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "4800", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "9600", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "19200", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "38400", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "57600", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "115200", 0, QApplication::UnicodeUTF8)
+        );
         msgPriorityLbl->setText(QApplication::translate("SenderWindow", "Message Priority", 0, QApplication::UnicodeUTF8));
         pushButton->setText(QApplication::translate("SenderWindow", "Testing Menu", 0, QApplication::UnicodeUTF8));
     } // retranslateUi

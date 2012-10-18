@@ -5,6 +5,8 @@
 #include <Windows.h>
 #include <MMSystem.h>
 
+
+
 namespace Ui {
 class SenderWindow;
 }
@@ -18,6 +20,7 @@ public:
     ~SenderWindow();
     QString GetMsgText() const;
     void SetMsgText(QString &text);
+    int GetBaudRate();
 
 protected slots:
     void Record();
