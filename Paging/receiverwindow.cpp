@@ -45,7 +45,9 @@ int ReceiverWindow::GetBaudRate()
 void ReceiverWindow::Refresh()
 {
     char readBuf[BUFSIZE] = {0};
-    ReadFromRS232((BYTE *)readBuf);
+    DWORD numBytes = 0;
+    SetUpDCB(this->GetBaudRate());
+    ReadFromRS232((BYTE *)readBuf, &numBytes);
     this->SetMsgText(QString(readBuf));
 }
 

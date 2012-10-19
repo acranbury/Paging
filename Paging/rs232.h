@@ -10,7 +10,7 @@
 int OpenRS232Port();
 int WriteToRS232(BYTE * writeBuf, long *bufSize);
 int SetUpDCB(int baudRate);
-void ReadFromRS232(BYTE * readBuf);
+void ReadFromRS232(BYTE * readBuf, DWORD *numBytesTransferred);
 void CloseRS232Port();
 
 static HANDLE hComm;

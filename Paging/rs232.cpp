@@ -92,12 +92,9 @@ int WriteToRS232(BYTE * writeBuf, long *bufSize)
 }
 
 // read from RS232
-void ReadFromRS232(BYTE * readBuf)
+void ReadFromRS232(BYTE * readBuf, DWORD *dwBytesTransferred)
 {
-    BYTE temp;
-    DWORD dwBytesTransferred;
     DWORD dwCommModemStatus;
-    int i = 0;
 
     // events to monitor
     SetCommMask(hComm, EV_RXCHAR);
@@ -109,19 +106,8 @@ void ReadFromRS232(BYTE * readBuf)
 
     if(dwCommModemStatus & EV_RXCHAR)
     {
-        // loop to wait for data
-        do
-        {
-            // Read data from serial port
-            ReadFile(hComm, &temp, 1, &dwBytesTransferred, 0);
-
-            // copy into the byte array
-            if(dwBytesTransferred == 1)
-            {
-                readBuf[i] = temp;
-                i++;
-            }
-        }while(dwBytesTransferred == 1 && i < BUFSIZE);
+        // Read data from serial port
+        ReadFile(hComm, readBuf, BUFSIZE, dwBytesTransferred, 0);
     }
 
 
