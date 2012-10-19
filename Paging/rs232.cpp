@@ -47,11 +47,12 @@ int SetUpDCB(int baudRate)
     // update baud rate
     portDCB.BaudRate = baudRate;
 
+
     // turn parity off for now
     portDCB.Parity = FALSE;
 
     // turn on binary send
-    portDCB.fBinary = TRUE;
+    //portDCB.fBinary = TRUE;
     portDCB.ByteSize = (BYTE)BYTESIZE;
     portDCB.StopBits = ONESTOPBIT;
 
