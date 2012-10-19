@@ -18,6 +18,7 @@ SenderWindow::SenderWindow(QWidget *parent) :
     // connect the buttons with their handlers
     connect(ui->recordBtn, SIGNAL(clicked()), this, SLOT(Record()));
     connect(ui->playBtn, SIGNAL(clicked()), this, SLOT(Playback()));
+    connect(ui->sendMsgBtn, SIGNAL(clicked()), this, SLOT(SendText()));
 
     // open the rs232 port
     OpenRS232Port();
@@ -93,6 +94,6 @@ void SenderWindow::SendText()
     // get the number of characters in the array
     numChars = (long)this->GetMsgText().length();
 
-    if(!WriteToRS232((short *)textBuf, &numChars))
+    if(!WriteToRS232((BYTE *)textBuf, &numChars))
         QMessageBox::information(NULL, "Error!", "Write to RS232 failed");
 }

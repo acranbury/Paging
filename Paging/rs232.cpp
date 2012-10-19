@@ -78,7 +78,7 @@ int SetUpDCB(int baudRate)
 }
 
 // write a buffer to RS232
-int WriteToRS232(short * writeBuf, long *bufSize)
+int WriteToRS232(BYTE * writeBuf, long *bufSize)
 {
     // write the file to
     int result = WriteFile(hComm,
@@ -102,6 +102,8 @@ void ReadFromRS232(BYTE * readBuf)
 
     // wait for character to come into the port
     WaitCommEvent(hComm, &dwCommModemStatus, 0);
+
+    SetCommMask(hComm, EV_RXCHAR);
 
     if(dwCommModemStatus & EV_RXCHAR)
     {
