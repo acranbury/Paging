@@ -3,12 +3,12 @@
 
 #include <Windows.h>
 
-#define COMPORT4 "COM4"
-#define COMPORT3 "COM3"
+#define COMPORT4 "\\\\.\\COM4"
+#define COMPORT3 "\\\\.\\COM3"
 #define BUFSIZE     140
 
 int OpenRS232Port();
-int WriteToRS232(short * writeBuf, long *bufSize);
+int WriteToRS232(BYTE * writeBuf, long *bufSize);
 int SetUpDCB(int baudRate);
 void ReadFromRS232(BYTE * readBuf);
 void CloseRS232Port();
