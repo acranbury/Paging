@@ -92,7 +92,7 @@ void SenderWindow::SendText()
     textBuf = this->GetMsgText().toAscii().data();
 
     // get the number of characters in the array
-    numChars = (long)this->GetMsgText().length();
+    numChars = (long)this->GetMsgText().length() + 1;
 
     if(!WriteToRS232((BYTE *)textBuf, &numChars))
         QMessageBox::information(NULL, "Error!", "Write to RS232 failed");
