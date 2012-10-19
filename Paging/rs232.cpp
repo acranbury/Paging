@@ -61,6 +61,19 @@ int SetUpDCB(int baudRate)
         return FALSE;
     }
 
+
+    timeouts.ReadIntervalTimeout = 50;
+    timeouts.ReadTotalTimeoutMultiplier = 10;
+    timeouts.ReadTotalTimeoutConstant = 100;
+    timeouts.WriteTotalTimeoutMultiplier = 10;
+    timeouts.WriteTotalTimeoutConstant = 100;
+
+    if (!SetCommTimeouts(hComm, &timeouts))
+    {
+        QMessageBox::information(NULL, "Error!", "Error setting timeouts. ");
+        return FALSE;
+    }
+
     return(1);
 }
 
@@ -77,13 +90,37 @@ int WriteToRS232(short * writeBuf, long *bufSize)
 }
 
 // read from RS232
-void ReadFromRS232(BYTE * readBuf, long *bufSize)
+void ReadFromRS232(BYTE * readBuf)
 {
-        ReadFile (hComm,
-                  readBuf,
-                  *bufSize,
-                  (LPDWORD)bufSize,
-                  NULL);
+    BYTE temp;
+    DWORD dwBytesTransferred;
+    DWORD dwCommModemStatus;
+    int i = 0;
+
+    // events to monitor
+    SetCommMask(hComm, EV_RXCHAR);
+
+    // wait for character to come into the port
+    WaitCommEvent(hComm, &dwCommModemStatus, 0);
+
+    if(dwCommModemStatus & EV_RXCHAR)
+    {
+        // loop to wait for data
+        do
+        {
+            // Read data from serial port
+            ReadFile(hComm, &temp, 1, &dwBytesTransferred, 0);
+
+            // copy into the byte array
+            if(dwBytesTransferred == 1)
+            {
+                readBuf[i] = temp;
+                i++;
+            }
+        }while(dwBytesTransferred == 1 && i < BUFSIZE);
+    }
+
+
 }
 
 // close the RS232 port

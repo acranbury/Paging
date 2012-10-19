@@ -3,8 +3,6 @@
 #include "playback.h"
 #include "rs232.h"
 
-#define BUFSIZE 140
-
 static short *iBigBuf;
 static long	 lBigBufSize;	// in samples
 
@@ -47,19 +45,8 @@ int ReceiverWindow::GetBaudRate()
 void ReceiverWindow::Refresh()
 {
     char readBuf[BUFSIZE];
-    long numBytes = 1;
-    char prev;
-
-    SetUpDCB(this->GetBaudRate());
-
-    ReadFromRS232((BYTE *)&prev, &numBytes);
-    if(prev != 0){
-        readBuf[0] = prev;
-        numBytes = BUFSIZE - 1;
-        ReadFromRS232((BYTE *)readBuf+1, &numBytes);
-    }
+    ReadFromRS232((BYTE *)readBuf);
     this->SetMsgText(QString(readBuf));
-
 }
 
 // gets the text of the text box
