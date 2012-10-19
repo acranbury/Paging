@@ -18,6 +18,7 @@ public:
     ~ReceiverWindow();
     QString GetMsgText() const;
     void SetMsgText(QString &text);
+    int GetBaudRate();
     
 protected slots:
     void Playback();

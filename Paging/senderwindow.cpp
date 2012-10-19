@@ -21,6 +21,7 @@ SenderWindow::SenderWindow(QWidget *parent) :
 
     // open the rs232 port
     OpenRS232Port();
+
 }
 
 // destructor
@@ -83,6 +84,8 @@ void SenderWindow::SendText()
 {
     char *textBuf;
     long numChars;
+
+    SetUpDCB(this->GetBaudRate());
 
     // get the text from the textbox, put it into char array
     textBuf = this->GetMsgText().toAscii().data();

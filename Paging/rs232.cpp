@@ -1,11 +1,12 @@
 #include "rs232.h"
 
 #include <QMessageBox>
+#define BYTESIZE  8
 
 // open the RS232 port
 int OpenRS232Port()
 {
-    hComm = CreateFile( (LPWSTR)COMPORT4,
+    hComm = CreateFile( TEXT(COMPORT4),
                         GENERIC_READ | GENERIC_WRITE,
                         0,
                         0,
@@ -17,7 +18,7 @@ int OpenRS232Port()
     if (hComm == INVALID_HANDLE_VALUE)
     {
         QMessageBox::information(NULL, "Error!", "Error opening serial port COM4.\n Press OK to try COM3.");
-        hComm = CreateFile( (LPWSTR)COMPORT3,
+        hComm = CreateFile( TEXT(COMPORT3),
                             GENERIC_READ | GENERIC_WRITE,
                             0,
                             0,
@@ -51,6 +52,8 @@ int SetUpDCB(int baudRate)
 
     // turn on binary send
     portDCB.fBinary = TRUE;
+    portDCB.ByteSize = (BYTE)BYTESIZE;
+    portDCB.StopBits = ONESTOPBIT;
 
     if(!SetCommState(hComm, &portDCB))
     {

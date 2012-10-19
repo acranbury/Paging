@@ -8,7 +8,7 @@
 
 int OpenRS232Port();
 int WriteToRS232(short * writeBuf, long *bufSize);
-int SetUpDCB();
+int SetUpDCB(int baudRate);
 void ReadFromRS232(BYTE * readBuf, long *bufSize);
 void CloseRS232Port();
 

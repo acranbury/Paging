@@ -39,11 +39,18 @@ void ReceiverWindow::Playback()
     free(iBigBuf);
 }
 
+int ReceiverWindow::GetBaudRate()
+{
+    return ui->baudRateCmb->itemText(ui->baudRateCmb->currentIndex()).toInt();
+}
+
 void ReceiverWindow::Refresh()
 {
     char readBuf[BUFSIZE];
     long numBytes = 1;
     char prev;
+
+    SetUpDCB(this->GetBaudRate());
 
     ReadFromRS232((BYTE *)&prev, &numBytes);
     if(prev != 0){
