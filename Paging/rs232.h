@@ -7,9 +7,9 @@
 #define COMPORT3 "COM3"
 
 int OpenRS232Port();
-int WriteToRS232(short * writeBuf, long bufSize);
+int WriteToRS232(short * writeBuf, long *bufSize);
 int SetUpDCB();
-void ReadFromRS232(short * readBuf, long *bufSize);
+void ReadFromRS232(BYTE * readBuf, long *bufSize);
 void CloseRS232Port();
 
 static HANDLE hComm;

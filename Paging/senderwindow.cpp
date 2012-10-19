@@ -3,10 +3,10 @@
 #include "ui_senderwindow.h"
 #include "playback.h"
 
+#include "rs232.h"
 
 static short *iBigBuf;      // audio buffer
 static long	 lBigBufSize;	// in samples
-static DCB   portDCB;       // com port settings structure
 
 // constructor
 SenderWindow::SenderWindow(QWidget *parent) :
@@ -18,12 +18,36 @@ SenderWindow::SenderWindow(QWidget *parent) :
     // connect the buttons with their handlers
     connect(ui->recordBtn, SIGNAL(clicked()), this, SLOT(Record()));
     connect(ui->playBtn, SIGNAL(clicked()), this, SLOT(Playback()));
+
+    // open the rs232 port
+    OpenRS232Port();
 }
 
 // destructor
 SenderWindow::~SenderWindow()
 {
     delete ui;
+
+    // close the rs232 port
+    CloseRS232Port();
+}
+
+// get the current baud rate
+int SenderWindow::GetBaudRate()
+{
+    return QString(ui->baudRateCmb->itemText(ui->baudRateCmb->currentIndex())).toInt();
+}
+
+// get the text of the text box
+QString SenderWindow::GetMsgText() const
+{
+    return ui->msgTxt->toPlainText();
+}
+
+// set the text of the text box
+void SenderWindow::SetMsgText(QString &text)
+{
+    ui->msgTxt->setText(text);
 }
 
 // record the audio buffer
@@ -54,20 +78,18 @@ void SenderWindow::Playback()
     free(iBigBuf);
 }
 
-// get the current baud rate
-int SenderWindow::GetBaudRate()
+// send text via RS232
+void SenderWindow::SendText()
 {
-    return QString(ui->baudRateCmb->itemText(ui->baudRateCmb->currentIndex())).toInt();
-}
+    char *textBuf;
+    long numChars;
 
-// get the text of the text box
-QString SenderWindow::GetMsgText() const
-{
-    return ui->msgTxt->toPlainText();
-}
+    // get the text from the textbox, put it into char array
+    textBuf = this->GetMsgText().toAscii().data();
 
-// set the text of the text box
-void SenderWindow::SetMsgText(QString &text)
-{
-    ui->msgTxt->setText(text);
+    // get the number of characters in the array
+    numChars = (long)this->GetMsgText().length();
+
+    if(!WriteToRS232((short *)textBuf, &numChars))
+        QMessageBox::information(NULL, "Error!", "Write to RS232 failed");
 }

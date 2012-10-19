@@ -21,6 +21,7 @@ public:
     
 protected slots:
     void Playback();
+    void Refresh();
 
 private:
     Ui::ReceiverWindow *ui;

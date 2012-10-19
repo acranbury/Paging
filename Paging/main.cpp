@@ -1,3 +1,10 @@
+/*  Coded Messaging System - ITCT Semester 3, Project 2
+  Authors: Alan Cranbury, Mark Mahony
+  October 19, 2012
+  Github: www.github.com/acranbury/Paging.git
+*/
+
+
 #include <QtGui/QApplication>
 #include <QMessageBox>
 #include <cctype>

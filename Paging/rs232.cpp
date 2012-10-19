@@ -1,4 +1,5 @@
 #include "rs232.h"
+
 #include <QMessageBox>
 
 // open the RS232 port
@@ -9,14 +10,25 @@ int OpenRS232Port()
                         0,
                         0,
                         OPEN_EXISTING,
-                        0,
+                        FILE_ATTRIBUTE_NORMAL,
                         0);
 
     // error opening port; abort
     if (hComm == INVALID_HANDLE_VALUE)
     {
-        QMessageBox::information(NULL, "Error!", "Error opening serial port.");
-        return(0);
+        QMessageBox::information(NULL, "Error!", "Error opening serial port COM4.\n Press OK to try COM3.");
+        hComm = CreateFile( (LPWSTR)COMPORT3,
+                            GENERIC_READ | GENERIC_WRITE,
+                            0,
+                            0,
+                            OPEN_EXISTING,
+                            0,
+                            0);
+         if (hComm == INVALID_HANDLE_VALUE)
+         {
+             QMessageBox::information(NULL, "Error!", "Error opening serial port COM3.");
+             return(0);
+         }
     }
     return (1);
 }
@@ -64,19 +76,11 @@ int WriteToRS232(short * writeBuf, long *bufSize)
 // read from RS232
 void ReadFromRS232(BYTE * readBuf, long *bufSize)
 {
-    BYTE prev, *curr;
-    prev = 0;
-    curr = NULL;
-    do
-    {
         ReadFile (hComm,
-                  curr,
-                  1,
+                  readBuf,
+                  *bufSize,
                   (LPDWORD)bufSize,
                   NULL);
-        prev = *curr;
-
-    }
 }
 
 // close the RS232 port

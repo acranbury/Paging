@@ -24,5 +24,3 @@ HEADERS  += senderwindow.h \
 
 FORMS    += senderwindow.ui \
     receiverwindow.ui
-
-#LIBS    += C:\\Windows\\system32\\winmm.lib

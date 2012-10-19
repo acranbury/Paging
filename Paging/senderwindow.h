@@ -25,6 +25,7 @@ public:
 protected slots:
     void Record();
     void Playback();
+    void SendText();
 
 private:
     Ui::SenderWindow *ui;
