@@ -38,6 +38,7 @@ int OpenRS232Port()
 int SetUpDCB(int baudRate)
 {
     FillMemory(&portDCB, sizeof(DCB), 0);
+    portDCB.DCBlength = sizeof(DCB);
     if (!GetCommState(hComm, &portDCB))
     {
           QMessageBox::information(NULL, "Error!", "Error getting current DCB settings.");
