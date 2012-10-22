@@ -2,7 +2,6 @@
 #include "senderwindow.h"
 #include "ui_senderwindow.h"
 #include "playback.h"
-
 #include "rs232.h"
 
 static short *iBigBuf;      // audio buffer
@@ -89,11 +88,12 @@ void SenderWindow::SendText()
     SetUpDCB(this->GetBaudRate());
 
     // get the text from the textbox, put it into char array
-    textBuf = this->GetMsgText().toAscii().data();
+    QByteArray ba = this->GetMsgText().toAscii();
+    textBuf = ba.data();
 
     // get the number of characters in the array
     numChars = (long)this->GetMsgText().length() + 1;
 
-    if(!WriteToRS232((BYTE *)textBuf, &numChars))
+    if(!WriteToRS232((BYTE *)textBuf, (DWORD *)&numChars))
         QMessageBox::information(NULL, "Error!", "Write to RS232 failed");
 }

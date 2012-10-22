@@ -38,7 +38,7 @@ int OpenRS232Port()
 int SetUpDCB(int baudRate)
 {
     FillMemory(&portDCB, sizeof(DCB), 0);
-    portDCB.DCBlength = sizeof(DCB);
+    portDCB.DCBlength = sizeof(portDCB);
     if (!GetCommState(hComm, &portDCB))
     {
           QMessageBox::information(NULL, "Error!", "Error getting current DCB settings.");
@@ -80,13 +80,14 @@ int SetUpDCB(int baudRate)
 }
 
 // write a buffer to RS232
-int WriteToRS232(BYTE * writeBuf, long *bufSize)
+int WriteToRS232(BYTE * writeBuf, DWORD *bufSize)
 {
+    //writeBuf = (BYTE *)"Hello World!\n";
     // write the file to
     int result = WriteFile(hComm,
                            writeBuf,
                            *bufSize,
-                           (LPDWORD)bufSize,
+                           bufSize,
                            NULL);
     return result;
 }
@@ -94,20 +95,21 @@ int WriteToRS232(BYTE * writeBuf, long *bufSize)
 // read from RS232
 void ReadFromRS232(BYTE * readBuf, DWORD *dwBytesTransferred)
 {
-    DWORD dwCommModemStatus;
+    // DWORD dwCommModemStatus;
 
     // events to monitor
-    SetCommMask(hComm, EV_RXCHAR);
+    // SetCommMask(hComm, EV_RXCHAR);
 
     // wait for character to come into the port
-    WaitCommEvent(hComm, &dwCommModemStatus, 0);
+    // WaitCommEvent(hComm, &dwCommModemStatus, 0);
 
-    SetCommMask(hComm, EV_RXCHAR);
+    // SetCommMask(hComm, EV_RXCHAR);
 
-    if(dwCommModemStatus & EV_RXCHAR)
+    // if(dwCommModemStatus & EV_RXCHAR)
     {
         // Read data from serial port
-        ReadFile(hComm, readBuf, BUFSIZE, dwBytesTransferred, 0);
+        int i = ReadFile(hComm, readBuf, BUFSIZE, dwBytesTransferred, 0);
+        if ( !i ) QMessageBox::information(NULL,"Read error", "read error" );
     }
 
 

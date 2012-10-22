@@ -185,6 +185,16 @@
       <height>22</height>
      </rect>
     </property>
+    <item>
+     <property name="text">
+      <string>2400</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>4800</string>
+     </property>
+    </item>
    </widget>
    <widget class="QLabel" name="baudRateLbl">
     <property name="geometry">

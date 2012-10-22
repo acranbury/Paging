@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'receiverwindow.ui'
 **
-** Created: Wed Oct 17 12:50:35 2012
+** Created: Fri Oct 19 14:03:59 2012
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -135,6 +135,11 @@ public:
         phoneBookBtn->setText(QApplication::translate("ReceiverWindow", "Phonebook", 0, QApplication::UnicodeUTF8));
         audioBtn->setText(QApplication::translate("ReceiverWindow", "Audio Messages", 0, QApplication::UnicodeUTF8));
         errorLbl->setText(QApplication::translate("ReceiverWindow", "Errors: 0", 0, QApplication::UnicodeUTF8));
+        baudRateCmb->clear();
+        baudRateCmb->insertItems(0, QStringList()
+         << QApplication::translate("ReceiverWindow", "2400", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("ReceiverWindow", "4800", 0, QApplication::UnicodeUTF8)
+        );
         baudRateLbl->setText(QApplication::translate("ReceiverWindow", "Baud Rate", 0, QApplication::UnicodeUTF8));
         pushButton->setText(QApplication::translate("ReceiverWindow", "Change Receiver ID(s)", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
