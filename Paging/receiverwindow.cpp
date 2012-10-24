@@ -4,6 +4,7 @@
 #include "ui_receiverwindow.h"
 #include "playback.h"
 #include "rs232.h"
+#include "TxtMessage.h"
 
 static short *iBigBuf;
 static long	 lBigBufSize;	// in samples
@@ -17,6 +18,7 @@ ReceiverWindow::ReceiverWindow(QWidget *parent) :
     // connect audio button to playback, not final
     connect(ui->audioBtn, SIGNAL(clicked()), this, SLOT(Playback()));
     connect(ui->refreshBtn, SIGNAL(clicked()), this, SLOT(Refresh()));
+    connect(ui->archiveBtn, SIGNAL(clicked()), this, SLOT(Archive()));
 
     // open RS232 port
     OpenRS232Port();
@@ -31,6 +33,16 @@ ReceiverWindow::~ReceiverWindow()
 
     // close rs232 port
     CloseRS232Port();
+}
+
+void ReceiverWindow::Archive()
+{
+    if (ui->msgOrderGrp->checkedButton()== ui->fifoRdoBtn){
+      //  Msg *newMsg;
+    //    newMsg->txt = this->GetMsgText().toAscii().data();
+   //     AddToQueue(newMsg);
+    }
+
 }
 
 void ReceiverWindow::Playback()
@@ -89,6 +101,7 @@ void PollRS232(void *dummy)
 
 void ReceiverWindow::Refresh()
 {
+    SetUpDCB(this->GetBaudRate());
     char readBuf[BUFSIZE] = {0};
     DWORD numBytes = 0;
     SetUpDCB(this->GetBaudRate());
