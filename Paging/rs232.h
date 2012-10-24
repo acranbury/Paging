@@ -8,7 +8,7 @@
 #define BUFSIZE     140
 
 int OpenRS232Port();
-int WriteToRS232(BYTE * writeBuf, long *bufSize);
+int WriteToRS232(BYTE * writeBuf, DWORD *bufSize);
 int SetUpDCB(int baudRate);
 void ReadFromRS232(BYTE * readBuf, DWORD *numBytesTransferred);
 void CloseRS232Port();
