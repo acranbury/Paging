@@ -19,6 +19,7 @@ public:
     QString GetMsgText() const;
     void SetMsgText(QString &text);
     int GetBaudRate();
+    void PollRS232(void * dummy);
     
 protected slots:
     void Playback();

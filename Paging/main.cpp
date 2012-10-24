@@ -26,7 +26,9 @@ int main(int argc, char *argv[])
         if(toupper(*argv[1]) == 'S')
             s.show();
         if(toupper(*argv[1]) == 'R')
+        {
             r.show();
+        }
     }
     else
     {

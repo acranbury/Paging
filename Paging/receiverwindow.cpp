@@ -1,3 +1,5 @@
+#include <process.h>
+#include <QMessageBox>
 #include "receiverwindow.h"
 #include "ui_receiverwindow.h"
 #include "playback.h"
@@ -18,6 +20,9 @@ ReceiverWindow::ReceiverWindow(QWidget *parent) :
 
     // open RS232 port
     OpenRS232Port();
+
+    // spin thread for polling rs232
+    _beginthread(this->PollRS232, 0, NULL);
 }
 
 ReceiverWindow::~ReceiverWindow()
@@ -40,6 +45,46 @@ void ReceiverWindow::Playback()
 int ReceiverWindow::GetBaudRate()
 {
     return ui->baudRateCmb->itemText(ui->baudRateCmb->currentIndex()).toInt();
+}
+
+void PollRS232(void *dummy)
+{
+
+    char readBuf[BUFSIZE] = {0};
+    SetUpDCB(this->GetBaudRate());
+    DWORD dwCommEvent, dwBytesTransferred;
+    while(1)
+    {
+        if(portDCB.BaudRate != this->GetBaudRate())
+            SetUpDCB(this->GetBaudRate());
+
+
+
+        if (!SetCommMask(hComm, EV_RXCHAR))
+        {
+            QMessageBox::information(NULL, "Error!", "Error setting communications mask. ");
+            return FALSE;
+        }
+
+        if (!WaitCommEvent(hComm, &dwCommEvent, NULL))
+        {
+            QMessageBox::information(NULL, "Error!", "Error occurred waiting for a character. ");
+            return FALSE;
+        }
+        else
+        {
+            if(!ReadFile(hComm, readBuf, BUFSIZE, dwBytesTransferred, 0))
+            {
+                QMessageBox::information(NULL, "Error!", "Error occurred receiving. ");
+                return FALSE;
+            }
+            return TRUE;
+        }
+        int i = ReadFile(hComm, readBuf, BUFSIZE, dwBytesTransferred, 0);
+        if ( !i ) QMessageBox::information(NULL,"Read error", "read error" );
+
+        this->SetMsgText(QString(readBuf));
+    }
 }
 
 void ReceiverWindow::Refresh()
