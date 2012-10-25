@@ -22,10 +22,14 @@ ReceiverWindow::ReceiverWindow(QWidget *parent) :
     // open RS232 port
     OpenRS232Port();
 
-    // spin thread for polling rs232
+    ptextEdit = ui->msgTxt;
+    pmsgLabel = ui->msgNumLbl;
+    pRawData = ui->rawModeChk;
+
     thread = new QThread;
-    poller = new PollingWorker(this->GetBaudRate(), ui->msgNumLbl);
+    poller = new PollingWorker(this->GetBaudRate(), ui->msgNumLbl, ui->msgTxt, ui->rawModeChk);
     poller->moveToThread(thread);
+    connect(poller, SIGNAL(error(QString)), this, SLOT(HandleErrors(QString error)));
     connect(thread, SIGNAL(started()), poller, SLOT(PollRS232()));
     connect(poller, SIGNAL(finished()), thread, SLOT(quit()));
     connect(poller, SIGNAL(finished()), poller, SLOT(deleteLater()));
@@ -39,11 +43,17 @@ ReceiverWindow::~ReceiverWindow()
     delete ui;
 
     // stop the thread from polling rs232
-    thread->~QThread();
-    poller->~PollingWorker();
+    //thread->~QThread();
+    //poller->~PollingWorker();
     // close rs232 port
     CloseRS232Port();
 
+}
+
+// displays the error of the polling thread
+void ReceiverWindow::HandleErrors(QString error)
+{
+    QMessageBox::information(NULL, "Error", error);
 }
 
 // saves the message on the top of the current queue to a file

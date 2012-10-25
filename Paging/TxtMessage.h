@@ -28,7 +28,11 @@ struct Header {
     long		lDataLength;	// size of message
     BYTE        bSenderAddr;    // sender ID.
     char		bTBD[17];		// to be determined
+<<<<<<< HEAD
     long		lPattern;	// must be 0xaa 0x55 0xaa 0x55
+=======
+    BYTE		bPattern[4];	// must be 0xaa 0x55 0xaa 0x55
+>>>>>>> github/master
 };
 
 typedef struct Header Header;

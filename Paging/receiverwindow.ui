@@ -26,6 +26,9 @@
     <property name="text">
      <string>Priority</string>
     </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
     <attribute name="buttonGroup">
      <string>msgOrderGrp</string>
     </attribute>
@@ -127,7 +130,7 @@
    <widget class="QPushButton" name="refreshBtn">
     <property name="geometry">
      <rect>
-      <x>290</x>
+      <x>240</x>
       <y>10</y>
       <width>75</width>
       <height>23</height>
@@ -258,6 +261,19 @@
     </property>
     <property name="readOnly">
      <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="rawModeChk">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>10</y>
+      <width>70</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Raw Mode</string>
     </property>
    </widget>
   </widget>

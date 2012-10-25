@@ -22,20 +22,25 @@ public:
     int GetBaudRate();
     int GetNumMsgs();
     void SetNumMsgs(int numMsgs);
+    QLabel *pmsgLabel;
+    QTextEdit *ptextEdit;
+    QCheckBox *pRawData;
     
 protected slots:
     void Playback();
     void Refresh();
     void Archive();
+    void HandleErrors(QString error);
 
 private:
     Ui::ReceiverWindow *ui;
-    void UpdateQueueWindow();       // handles updating messages in the textEdit
+    //void UpdateQueueWindow();       // handles updating messages in the textEdit
     //static HANDLE pollingHandle;    // handle for polling thread
     short *iBigBuf;          // pointer to audio buffer
     long lBigBufSize;       // audio playback buffer size
     QThread *thread;
     PollingWorker *poller;
+
 };
 
 #endif // RECEIVERWINDOW_H

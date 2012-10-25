@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'receiverwindow.ui'
 **
-** Created: Thu Oct 25 08:25:45 2012
+** Created: Thu Oct 25 13:53:34 2012
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -14,6 +14,7 @@
 #include <QtGui/QAction>
 #include <QtGui/QApplication>
 #include <QtGui/QButtonGroup>
+#include <QtGui/QCheckBox>
 #include <QtGui/QComboBox>
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
@@ -46,6 +47,7 @@ public:
     QLabel *baudRateLbl;
     QPushButton *pushButton;
     QTextEdit *msgTxt;
+    QCheckBox *rawModeChk;
     QMenuBar *menubar;
     QButtonGroup *msgOrderGrp;
 
@@ -62,6 +64,7 @@ public:
         msgOrderGrp->addButton(priorityRdoBtn);
         priorityRdoBtn->setObjectName(QString::fromUtf8("priorityRdoBtn"));
         priorityRdoBtn->setGeometry(QRect(10, 30, 61, 17));
+        priorityRdoBtn->setChecked(true);
         fifoRdoBtn = new QRadioButton(centralwidget);
         msgOrderGrp->addButton(fifoRdoBtn);
         fifoRdoBtn->setObjectName(QString::fromUtf8("fifoRdoBtn"));
@@ -86,7 +89,7 @@ public:
         msgNumLbl->setGeometry(QRect(120, 10, 121, 16));
         refreshBtn = new QPushButton(centralwidget);
         refreshBtn->setObjectName(QString::fromUtf8("refreshBtn"));
-        refreshBtn->setGeometry(QRect(290, 10, 75, 23));
+        refreshBtn->setGeometry(QRect(240, 10, 75, 23));
         phoneBookBtn = new QPushButton(centralwidget);
         phoneBookBtn->setObjectName(QString::fromUtf8("phoneBookBtn"));
         phoneBookBtn->setGeometry(QRect(230, 260, 75, 23));
@@ -109,6 +112,9 @@ public:
         msgTxt->setObjectName(QString::fromUtf8("msgTxt"));
         msgTxt->setGeometry(QRect(110, 50, 271, 191));
         msgTxt->setReadOnly(true);
+        rawModeChk = new QCheckBox(centralwidget);
+        rawModeChk->setObjectName(QString::fromUtf8("rawModeChk"));
+        rawModeChk->setGeometry(QRect(330, 10, 70, 17));
         ReceiverWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(ReceiverWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -147,6 +153,7 @@ public:
         );
         baudRateLbl->setText(QApplication::translate("ReceiverWindow", "Baud Rate", 0, QApplication::UnicodeUTF8));
         pushButton->setText(QApplication::translate("ReceiverWindow", "Change Receiver ID(s)", 0, QApplication::UnicodeUTF8));
+        rawModeChk->setText(QApplication::translate("ReceiverWindow", "Raw Mode", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
