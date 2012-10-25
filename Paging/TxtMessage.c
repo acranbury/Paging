@@ -10,6 +10,9 @@
 #include <stdlib.h> // for rand()
 #include "TxtMessage.h"
 
+Msg * tail;
+Msg * head;
+int numberOfMessages = 0;
 
 /*void main(int argc, char *argv[]) {
 	char *buffer = (char*)malloc(sizeof(char) * LENGTH);
@@ -138,6 +141,7 @@ void AddToQueue (Msg *newMsg) {
 	}
 	newMsg->next = NULL;			// Set the new tail to point to the end, NULL.
 	tail = newMsg;					// The new tail is the new message.
+    numberOfMessages++;
 
 }
 
@@ -146,5 +150,6 @@ Msg *DeleteFromQueue (void) {
 	if (head == NULL) return (NULL);
 	temp = head;
 	head = head->next;
+    numberOfMessages--;
 	return (temp);
 }

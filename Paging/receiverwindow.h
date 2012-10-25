@@ -3,7 +3,8 @@
 
 #include <QMainWindow>
 #include <Windows.h>
-
+#include <QThread>
+#include "pollingworker.h"
 
 namespace Ui {
 class ReceiverWindow;
@@ -19,6 +20,8 @@ public:
     QString GetMsgText() const;
     void SetMsgText(QString &text);
     int GetBaudRate();
+    int GetNumMsgs();
+    void SetNumMsgs(int numMsgs);
     
 protected slots:
     void Playback();
@@ -27,7 +30,12 @@ protected slots:
 
 private:
     Ui::ReceiverWindow *ui;
-    void ReadRS232(HANDLE hComm);
+    void UpdateQueueWindow();       // handles updating messages in the textEdit
+    //static HANDLE pollingHandle;    // handle for polling thread
+    short *iBigBuf;          // pointer to audio buffer
+    long lBigBufSize;       // audio playback buffer size
+    QThread *thread;
+    PollingWorker *poller;
 };
 
 #endif // RECEIVERWINDOW_H
