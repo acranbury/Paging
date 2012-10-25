@@ -1,13 +1,12 @@
 #include <process.h>
 #include <QMessageBox>
 #include "receiverwindow.h"
+#include "pollingworker.h"
 #include "ui_receiverwindow.h"
 #include "playback.h"
 #include "rs232.h"
 #include "TxtMessage.h"
 
-static short *iBigBuf;
-static long	 lBigBufSize;	// in samples
 
 ReceiverWindow::ReceiverWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -24,17 +23,30 @@ ReceiverWindow::ReceiverWindow(QWidget *parent) :
     OpenRS232Port();
 
     // spin thread for polling rs232
-    _beginthread(this->PollRS232, 0, NULL);
+    thread = new QThread;
+    poller = new PollingWorker(this->GetBaudRate());
+    poller->moveToThread(thread);
+    connect(thread, SIGNAL(started()), poller, SLOT(PollRS232()));
+    connect(poller, SIGNAL(finished()), thread, SLOT(quit()));
+    connect(poller, SIGNAL(finished()), poller, SLOT(deleteLater()));
+    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+    thread->start();
 }
 
+// cleans up the receiver window
 ReceiverWindow::~ReceiverWindow()
 {
     delete ui;
 
+    // stop the thread from polling rs232
+    thread->~QThread();
+    poller->~PollingWorker();
     // close rs232 port
     CloseRS232Port();
+
 }
 
+// saves the message on the top of the current queue to a file
 void ReceiverWindow::Archive()
 {
     if (ui->msgOrderGrp->checkedButton()== ui->fifoRdoBtn){
@@ -45,6 +57,7 @@ void ReceiverWindow::Archive()
 
 }
 
+// plays back the audio buffer stored in iBigBuf
 void ReceiverWindow::Playback()
 {
     this->SetMsgText(QString("Playing broadcast..."));
@@ -54,74 +67,21 @@ void ReceiverWindow::Playback()
     free(iBigBuf);
 }
 
+// get the baud rate from the combo box
 int ReceiverWindow::GetBaudRate()
 {
     return ui->baudRateCmb->itemText(ui->baudRateCmb->currentIndex()).toInt();
 }
 
-void ReceiverWindow::PollRS232(void *dummy)
-{
-
-    char readBuf[BUFSIZE] = {0};
-    Header * headerBuffer;
-    SetUpDCB(this->GetBaudRate());
-    long numBytesToGet;
-    DWORD dwCommEvent, dwBytesTransferred;
-    Msg * newMsg;
-    while(1)
-    {
-        if(portDCB.BaudRate != this->GetBaudRate())
-            SetUpDCB(this->GetBaudRate());
-
-
-
-        if (!SetCommMask(hComm, EV_RXCHAR))
-        {
-            QMessageBox::information(NULL, "Error!", "Error setting communications mask.");
-            return FALSE;
-        }
-
-        if (!WaitCommEvent(hComm, &dwCommEvent, NULL))
-        {
-            QMessageBox::information(NULL, "Error!", "Error occurred waiting for a character.");
-            return FALSE;
-        }
-        else
-        {
-            headerBuffer = (Header *)malloc(sizeof(struct Header));
-            if(!ReadFile(hComm, (BYTE *)headerBuffer, HEADERSIZE, dwBytesTransferred, 0))
-            {
-                QMessageBox::information(NULL, "Error!", "Error occurred receiving header.");
-                return FALSE;
-            }
-            if(headerBuffer->lSignature == 0xDEADBEEF)
-            {
-                numBytesToGet = headerBuffer->lDataLength;
-            }
-            if(!ReadFile(hComm, readBuf, numBytesToGet, dwBytesTransferred, 0))
-            {
-                QMessageBox::information(NULL, "Error!", "Error occurred receiving message.");
-                return FALSE;
-            }
-
-            newMsg = (Msg *)malloc(sizeof(struct message));
-            strcpy(newMsg->txt, readBuf);
-            newMsg->senderID = rand() % 100;
-            newMsg->receiverID = headerBuffer->bReceiverAddr;
-            newMsg->msgNum = rand() % 100;
-            AddToQueue(newMsg);
-        }
-    }
-}
-
+// restarts the polling thread if need be
 void ReceiverWindow::Refresh()
 {
-    SetUpDCB(this->GetBaudRate());
-    char readBuf[BUFSIZE] = {0};
-    DWORD numBytes = 0;
-    SetUpDCB(this->GetBaudRate());
-    ReadFromRS232((BYTE *)readBuf, &numBytes);
-    this->SetMsgText(QString(readBuf));
+    if(poller->GetBaudRate() != this->GetBaudRate())
+        poller->SetBaudRate(this->GetBaudRate());
+    if(!thread->isRunning())
+        poller->moveToThread(thread);
+        connect(thread, SIGNAL(started()), poller, SLOT(PollRS232()));
+        thread->start();
 }
 
 // gets the text of the text box
@@ -136,12 +96,9 @@ void ReceiverWindow::SetMsgText(QString &text)
     ui->msgTxt->setText(text);
 }
 
-int ReceiverWindow::GetNumMsgs()
-{
-    return ui->msgNumLbl->text().toInt();
-}
 
+// sets the text of how many messages we have received
 void ReceiverWindow::SetNumMsgs(int numMsgs)
 {
-    ui->msgNumLbl->setText(QString("Number of Messages: %1").args(numMsgs));
+    ui->msgNumLbl->setText(QString("Number of Messages: %1").arg(numMsgs));
 }

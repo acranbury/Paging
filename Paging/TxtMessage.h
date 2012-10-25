@@ -1,6 +1,8 @@
 #ifndef TXTMESSAGE_H
 #define TXTMESSAGE_H
 
+#include <Windows.h>
+
 #define LENGTH 140	// Length of message in buffer
 #define UNKNOWN 25	// Unknown purpose
 #define FORTUNETXT	"FortuneCookies.txt"
@@ -30,7 +32,8 @@ struct Header {
 
 typedef struct Header Header;
 typedef struct message Msg;
-Msg * tail, * head;
+extern Msg * tail;
+extern Msg * head;
 
 void GetMessageFromFile(char *buffer,int iLen);
 void InitQueue (void);

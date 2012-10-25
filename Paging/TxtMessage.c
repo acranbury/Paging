@@ -10,6 +10,8 @@
 #include <stdlib.h> // for rand()
 #include "TxtMessage.h"
 
+Msg * tail;
+Msg * head;
 
 /*void main(int argc, char *argv[]) {
 	char *buffer = (char*)malloc(sizeof(char) * LENGTH);
