@@ -82,7 +82,6 @@ int SetUpDCB(int baudRate)
 // write a buffer to RS232
 int WriteToRS232(BYTE * writeBuf, DWORD *bufSize)
 {
-    //writeBuf = (BYTE *)"Hello World!\n";
     // write the file to
     int result = WriteFile(hComm,
                            writeBuf,

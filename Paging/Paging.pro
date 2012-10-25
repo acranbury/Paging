@@ -8,7 +8,8 @@ QT       += core gui
 
 TARGET = Paging
 TEMPLATE = app
-
+CONFIG += debug
+CONFIG += console
 
 SOURCES += main.cpp \
     senderwindow.cpp \

@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QLabel>
+#include <QTextEdit>
+#include <QCheckBox>
 #include <Windows.h>
 #include <QMessageBox>
 #include "pollingworker.h"
@@ -17,13 +19,14 @@ class PollingWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit PollingWorker(int ibaudRate, QLabel * numMsgs);
+    explicit PollingWorker(int ibaudRate, QLabel * numMsgs, QTextEdit *msgTextBox, QCheckBox *msgCheck);
     ~PollingWorker();
     void SetBaudRate(int ibaudRate);
     int GetBaudRate();
     
 signals:
     void finished();
+    void error(QString err);
     
 public slots:
     void PollRS232();
@@ -31,6 +34,8 @@ public slots:
 private:
     int baudRate;
     QLabel * msgLabel;
+    QTextEdit * msgText;
+    QCheckBox * isRaw;
 };
 
 #endif // POLLINGWORKER_H

@@ -91,7 +91,6 @@ void SenderWindow::SendText()
     // get the text from the textbox, put it into char array
     QByteArray ba = this->GetMsgText().toAscii();
     textBuf = ba.data();
-    Header *msgHeader = (Header *)malloc(sizeof(Header));
 
     // get the number of characters in the array
     numChars = (long)this->GetMsgText().length() + 1;
