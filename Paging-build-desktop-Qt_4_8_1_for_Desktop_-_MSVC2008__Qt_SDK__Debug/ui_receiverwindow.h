@@ -143,14 +143,11 @@ public:
         baudRateCmb->insertItems(0, QStringList()
          << QApplication::translate("ReceiverWindow", "2400", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("ReceiverWindow", "4800", 0, QApplication::UnicodeUTF8)
-<<<<<<< HEAD
          << QApplication::translate("ReceiverWindow", "9600", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("ReceiverWindow", "19200", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("ReceiverWindow", "38400", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("ReceiverWindow", "57600", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("ReceiverWindow", "115200", 0, QApplication::UnicodeUTF8)
-=======
->>>>>>> github/master
         );
         baudRateLbl->setText(QApplication::translate("ReceiverWindow", "Baud Rate", 0, QApplication::UnicodeUTF8));
         pushButton->setText(QApplication::translate("ReceiverWindow", "Change Receiver ID(s)", 0, QApplication::UnicodeUTF8));
