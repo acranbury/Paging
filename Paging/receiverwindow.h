@@ -20,6 +20,8 @@ public:
     void SetMsgText(QString &text);
     int GetBaudRate();
     void PollRS232(void * dummy);
+    int GetNumMsgs();
+    void SetNumMsgs(int numMsgs);
     
 protected slots:
     void Playback();
@@ -28,7 +30,7 @@ protected slots:
 
 private:
     Ui::ReceiverWindow *ui;
-    void ReadRS232(HANDLE hComm);
+
 };
 
 #endif // RECEIVERWINDOW_H

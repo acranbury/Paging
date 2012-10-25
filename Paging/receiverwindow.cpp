@@ -59,12 +59,15 @@ int ReceiverWindow::GetBaudRate()
     return ui->baudRateCmb->itemText(ui->baudRateCmb->currentIndex()).toInt();
 }
 
-void PollRS232(void *dummy)
+void ReceiverWindow::PollRS232(void *dummy)
 {
 
     char readBuf[BUFSIZE] = {0};
+    Header * headerBuffer;
     SetUpDCB(this->GetBaudRate());
+    long numBytesToGet;
     DWORD dwCommEvent, dwBytesTransferred;
+    Msg * newMsg;
     while(1)
     {
         if(portDCB.BaudRate != this->GetBaudRate())
@@ -74,28 +77,40 @@ void PollRS232(void *dummy)
 
         if (!SetCommMask(hComm, EV_RXCHAR))
         {
-            QMessageBox::information(NULL, "Error!", "Error setting communications mask. ");
+            QMessageBox::information(NULL, "Error!", "Error setting communications mask.");
             return FALSE;
         }
 
         if (!WaitCommEvent(hComm, &dwCommEvent, NULL))
         {
-            QMessageBox::information(NULL, "Error!", "Error occurred waiting for a character. ");
+            QMessageBox::information(NULL, "Error!", "Error occurred waiting for a character.");
             return FALSE;
         }
         else
         {
-            if(!ReadFile(hComm, readBuf, BUFSIZE, dwBytesTransferred, 0))
+            headerBuffer = (Header *)malloc(sizeof(struct Header));
+            if(!ReadFile(hComm, (BYTE *)headerBuffer, HEADERSIZE, dwBytesTransferred, 0))
             {
-                QMessageBox::information(NULL, "Error!", "Error occurred receiving. ");
+                QMessageBox::information(NULL, "Error!", "Error occurred receiving header.");
                 return FALSE;
             }
-            return TRUE;
-        }
-        int i = ReadFile(hComm, readBuf, BUFSIZE, dwBytesTransferred, 0);
-        if ( !i ) QMessageBox::information(NULL,"Read error", "read error" );
+            if(headerBuffer->lSignature == 0xDEADBEEF)
+            {
+                numBytesToGet = headerBuffer->lDataLength;
+            }
+            if(!ReadFile(hComm, readBuf, numBytesToGet, dwBytesTransferred, 0))
+            {
+                QMessageBox::information(NULL, "Error!", "Error occurred receiving message.");
+                return FALSE;
+            }
 
-        this->SetMsgText(QString(readBuf));
+            newMsg = (Msg *)malloc(sizeof(struct message));
+            strcpy(newMsg->txt, readBuf);
+            newMsg->senderID = rand() % 100;
+            newMsg->receiverID = headerBuffer->bReceiverAddr;
+            newMsg->msgNum = rand() % 100;
+            AddToQueue(newMsg);
+        }
     }
 }
 
@@ -119,4 +134,14 @@ QString ReceiverWindow::GetMsgText() const
 void ReceiverWindow::SetMsgText(QString &text)
 {
     ui->msgTxt->setText(text);
+}
+
+int ReceiverWindow::GetNumMsgs()
+{
+    return ui->msgNumLbl->text().toInt();
+}
+
+void ReceiverWindow::SetNumMsgs(int numMsgs)
+{
+    ui->msgNumLbl->setText(QString("Number of Messages: %1").args(numMsgs));
 }
