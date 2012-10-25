@@ -2,6 +2,7 @@
 #define POLLINGWORKER_H
 
 #include <QObject>
+#include <QLabel>
 #include <Windows.h>
 #include <QMessageBox>
 #include "pollingworker.h"
@@ -16,7 +17,7 @@ class PollingWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit PollingWorker(int ibaudRate);
+    explicit PollingWorker(int ibaudRate, QLabel * numMsgs);
     ~PollingWorker();
     void SetBaudRate(int ibaudRate);
     int GetBaudRate();
@@ -29,6 +30,7 @@ public slots:
     
 private:
     int baudRate;
+    QLabel * msgLabel;
 };
 
 #endif // POLLINGWORKER_H

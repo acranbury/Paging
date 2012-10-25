@@ -24,7 +24,7 @@ ReceiverWindow::ReceiverWindow(QWidget *parent) :
 
     // spin thread for polling rs232
     thread = new QThread;
-    poller = new PollingWorker(this->GetBaudRate());
+    poller = new PollingWorker(this->GetBaudRate(), ui->msgNumLbl);
     poller->moveToThread(thread);
     connect(thread, SIGNAL(started()), poller, SLOT(PollRS232()));
     connect(poller, SIGNAL(finished()), thread, SLOT(quit()));
@@ -81,6 +81,9 @@ void ReceiverWindow::Refresh()
     if(!thread->isRunning())
         poller->moveToThread(thread);
         connect(thread, SIGNAL(started()), poller, SLOT(PollRS232()));
+        connect(poller, SIGNAL(finished()), thread, SLOT(quit()));
+        connect(poller, SIGNAL(finished()), poller, SLOT(deleteLater()));
+        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
         thread->start();
 }
 

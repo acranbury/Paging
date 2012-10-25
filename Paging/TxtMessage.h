@@ -34,6 +34,7 @@ typedef struct Header Header;
 typedef struct message Msg;
 extern Msg * tail;
 extern Msg * head;
+extern int numberOfMessages;
 
 void GetMessageFromFile(char *buffer,int iLen);
 void InitQueue (void);

@@ -1,11 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'receiverwindow.ui'
 **
-<<<<<<< HEAD
-** Created: Fri Oct 19 10:13:15 2012
-=======
-** Created: Fri Oct 19 14:03:59 2012
->>>>>>> github/master
+** Created: Thu Oct 25 08:25:45 2012
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -143,14 +139,11 @@ public:
         baudRateCmb->insertItems(0, QStringList()
          << QApplication::translate("ReceiverWindow", "2400", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("ReceiverWindow", "4800", 0, QApplication::UnicodeUTF8)
-<<<<<<< HEAD
          << QApplication::translate("ReceiverWindow", "9600", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("ReceiverWindow", "19200", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("ReceiverWindow", "38400", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("ReceiverWindow", "57600", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("ReceiverWindow", "115200", 0, QApplication::UnicodeUTF8)
-=======
->>>>>>> github/master
         );
         baudRateLbl->setText(QApplication::translate("ReceiverWindow", "Baud Rate", 0, QApplication::UnicodeUTF8));
         pushButton->setText(QApplication::translate("ReceiverWindow", "Change Receiver ID(s)", 0, QApplication::UnicodeUTF8));

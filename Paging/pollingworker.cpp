@@ -1,8 +1,9 @@
 #include "pollingworker.h"
 
-PollingWorker::PollingWorker(int ibaudRate)
+PollingWorker::PollingWorker(int ibaudRate, QLabel * numMsgs)
 {
     baudRate = ibaudRate;
+    msgLabel = numMsgs;
 }
 
 PollingWorker::~PollingWorker()
@@ -76,6 +77,7 @@ void PollingWorker::PollRS232()
             newMsg->receiverID = headerBuffer->bReceiverAddr;
             newMsg->msgNum = rand() % 100;
             AddToQueue(newMsg);
+            msgLabel->setText(QString("Number of Messages: %1").arg(numberOfMessages));
         }
     }
 }
