@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     SenderWindow s;
-    ReceiverWindow r;
+    //ReceiverWindow r;
 
     if(argc > 1)
     {
@@ -27,13 +27,13 @@ int main(int argc, char *argv[])
             s.show();
         if(toupper(*argv[1]) == 'R')
         {
-            r.show();
+           // r.show();
         }
     }
     else
     {
         QMessageBox::information(NULL, "Defaulting...", "Defaulting to Sender");
-        r.show();
+        s.show();
     }
 
     return a.exec();

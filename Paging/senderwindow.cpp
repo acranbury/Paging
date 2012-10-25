@@ -85,17 +85,36 @@ void SenderWindow::SendText()
 {
     char *textBuf;
     long numChars;
+    DWORD headerSize;
+    headerSize = HEADERSIZE;
 
     SetUpDCB(this->GetBaudRate());
 
     // get the text from the textbox, put it into char array
     QByteArray ba = this->GetMsgText().toAscii();
     textBuf = ba.data();
-    Header *msgHeader = (Header *)malloc(sizeof(Header));
 
     // get the number of characters in the array
     numChars = (long)this->GetMsgText().length() + 1;
 
+
+    if (ui->headerChk->isChecked()){
+
+        Header *msgHeader = (Header *)malloc(sizeof(Header));
+        // populate header
+        msgHeader->lSignature = 0xDEADBEEF;
+        msgHeader->bReceiverAddr = 0xFF;
+        msgHeader->bVersion = 0;
+        msgHeader->lDataLength = numChars;
+        msgHeader->bSenderAddr = DEFSENDER; //For now, should change this to variable/ link with button
+        msgHeader->lPattern = 0xAA55AA55;
+
+
+        if(!WriteToRS232((BYTE *)msgHeader, &headerSize)){
+            QMessageBox::information(NULL, "Error!", "Write header to RS232 failed");
+            return;
+     }
+    }
     if(!WriteToRS232((BYTE *)textBuf, (DWORD *)&numChars))
-        QMessageBox::information(NULL, "Error!", "Write to RS232 failed");
+        QMessageBox::information(NULL, "Error!", "Write data to RS232 failed");
 }

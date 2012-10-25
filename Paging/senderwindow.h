@@ -5,7 +5,7 @@
 #include <Windows.h>
 #include <MMSystem.h>
 
-
+#define DEFSENDER 0x45
 
 namespace Ui {
 class SenderWindow;

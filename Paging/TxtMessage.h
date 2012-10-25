@@ -26,8 +26,9 @@ struct Header {
     BYTE		bReceiverAddr;	// receiver ID. 0xff=broadcast
     BYTE		bVersion;		// must be 1 for version 1
     long		lDataLength;	// size of message
-    char		bTBD[18];		// to be determined
-    BYTE		bPattern[4];	// must be 0xaa 0x55 0xaa 0x55
+    BYTE        bSenderAddr;    // sender ID.
+    char		bTBD[17];		// to be determined
+    long		lPattern;	// must be 0xaa 0x55 0xaa 0x55
 };
 
 typedef struct Header Header;

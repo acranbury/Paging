@@ -283,7 +283,7 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>100</x>
       <y>250</y>
       <width>75</width>
       <height>23</height>
@@ -291,6 +291,22 @@
     </property>
     <property name="text">
      <string>Testing Menu</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="headerChk">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>250</y>
+      <width>70</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Headers</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>
