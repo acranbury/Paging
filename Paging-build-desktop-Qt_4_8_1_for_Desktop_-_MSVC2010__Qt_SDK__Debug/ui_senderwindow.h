@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'senderwindow.ui'
 **
-** Created: Thu Oct 25 06:25:03 2012
+** Created: Thu Oct 25 17:56:09 2012
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -14,6 +14,7 @@
 #include <QtGui/QAction>
 #include <QtGui/QApplication>
 #include <QtGui/QButtonGroup>
+#include <QtGui/QCheckBox>
 #include <QtGui/QComboBox>
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
@@ -48,6 +49,7 @@ public:
     QLabel *msgPriorityLbl;
     QComboBox *msgPriorityCmb;
     QPushButton *pushButton;
+    QCheckBox *headerChk;
     QMenuBar *menuBar;
 
     void setupUi(QMainWindow *SenderWindow)
@@ -113,7 +115,11 @@ public:
         msgPriorityCmb->setGeometry(QRect(100, 120, 51, 22));
         pushButton = new QPushButton(centralWidget);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        pushButton->setGeometry(QRect(130, 250, 75, 23));
+        pushButton->setGeometry(QRect(100, 250, 75, 23));
+        headerChk = new QCheckBox(centralWidget);
+        headerChk->setObjectName(QString::fromUtf8("headerChk"));
+        headerChk->setGeometry(QRect(180, 250, 70, 17));
+        headerChk->setChecked(true);
         SenderWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(SenderWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -157,6 +163,7 @@ public:
         );
         msgPriorityLbl->setText(QApplication::translate("SenderWindow", "Message Priority", 0, QApplication::UnicodeUTF8));
         pushButton->setText(QApplication::translate("SenderWindow", "Testing Menu", 0, QApplication::UnicodeUTF8));
+        headerChk->setText(QApplication::translate("SenderWindow", "Headers", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

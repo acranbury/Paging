@@ -25,12 +25,15 @@ public:
     QLabel *pmsgLabel;
     QTextEdit *ptextEdit;
     QCheckBox *pRawData;
+    void StartPoller();
     
 protected slots:
     void Playback();
     void Refresh();
     void Archive();
-    void HandleErrors(QString error);
+    void HandleErrors(QString error, int code);
+    void HandleLabelChange(QString message);
+    void HandleTextChange(QString message);
 
 private:
     Ui::ReceiverWindow *ui;

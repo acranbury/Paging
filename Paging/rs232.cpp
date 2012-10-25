@@ -3,6 +3,9 @@
 #include <QMessageBox>
 #define BYTESIZE  8
 
+HANDLE hComm;
+DCB portDCB;
+
 // open the RS232 port
 int OpenRS232Port()
 {
