@@ -27,12 +27,8 @@ int main(int argc, char *argv[])
             s.show();
         if(toupper(*argv[1]) == 'R')
         {
-<<<<<<< HEAD
-           // r.show();
-=======
             r.show();
 
->>>>>>> github/master
         }
     }
     else
