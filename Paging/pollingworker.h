@@ -22,6 +22,7 @@ public:
     ~PollingWorker();
     void SetBaudRate(int ibaudRate);
     int GetBaudRate();
+    void SetIsFinished(int finish);
     
 signals:
     void finished();
@@ -35,6 +36,7 @@ public slots:
 private:
     int baudRate;
     QCheckBox * isRaw;
+    int isFinish;
 };
 
 #endif // POLLINGWORKER_H

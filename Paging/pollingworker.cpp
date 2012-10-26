@@ -21,17 +21,23 @@ int PollingWorker::GetBaudRate()
     return baudRate;
 }
 
+void PollingWorker::SetIsFinished(int finish)
+{
+    isFinish = finish;
+}
+
 void PollingWorker::PollRS232()
 {
-    char readBuf[BUFSIZE] = {0};
+    char * readBuf;
     char * rawByte;
-    Header * headerBuffer;
-    SetUpDCB(baudRate);
+    Header * headerBuffer;    
     long numBytesToGet;
     DWORD dwCommEvent, dwBytesTransferred;
     Msg * newMsg;
-    while(isRaw->isVisible())
+    isFinish = 0;
+    while(!isFinish)
     {
+        SetUpDCB(baudRate);
         // set up the mask, EV_RXCHAR is the event when we receive a character
         if (!SetCommMask(hComm, EV_RXCHAR))
             emit error(QString("Error setting communications mask."), (int)GetLastError());
@@ -48,23 +54,32 @@ void PollingWorker::PollRS232()
                 // set up the header buffer
                 if(!(headerBuffer = (Header *)malloc(sizeof(struct Header))))
                         emit error(QString("Error malloccing headerBuffer."), (int)GetLastError());
+
                 if(!ReadFile(hComm, (BYTE *)headerBuffer, HEADERSIZE, &dwBytesTransferred, 0))
                     emit error(QString("Error setting up the header buffer."), (int)GetLastError());
+
+                emit error(QString("size of header"), (int)(dwBytesTransferred));
 
                 // if the header is good, get the length of the message
                 if(headerBuffer->lSignature == 0xDEADBEEF && headerBuffer->bReceiverAddr == 0xFF)
                 {
                     numBytesToGet = headerBuffer->lDataLength;
+                    emit error(QString::number(numBytesToGet), 0);
+                    readBuf = (char*)calloc(numBytesToGet,sizeof(char));
+                    if (readBuf == NULL)
+                        emit error(QString("Error mallocing readBuf."), (int)GetLastError());
 
                     // get the message
                     if(!ReadFile(hComm, readBuf, numBytesToGet, &dwBytesTransferred, 0))
                         emit error(QString("Error getting the message."), (int)GetLastError());
+                    emit error(QString(readBuf), (int)(dwBytesTransferred));
 
 
                     // create a new message structure and put it on the queue
                     // not all the header options we need are available - ask Jack!
                     if(!(newMsg = (Msg *)malloc(sizeof(struct message))))
                         emit error(QString("Error malloccing newMsg."), (int)GetLastError());
+
                     strcpy(newMsg->txt, readBuf);
                     newMsg->senderID = headerBuffer->bSenderAddr;
                     newMsg->receiverID = headerBuffer->bReceiverAddr;

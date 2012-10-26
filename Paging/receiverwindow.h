@@ -34,15 +34,17 @@ protected slots:
     void HandleErrors(QString error, int code);
     void HandleLabelChange(QString message);
     void HandleTextChange(QString message);
+    void UpdateQueueWindow();       // handles updating messages in the textEdit
 
 private:
     Ui::ReceiverWindow *ui;
-    //void UpdateQueueWindow();       // handles updating messages in the textEdit
-    //static HANDLE pollingHandle;    // handle for polling thread
     short *iBigBuf;          // pointer to audio buffer
     long lBigBufSize;       // audio playback buffer size
     QThread *thread;
     PollingWorker *poller;
+    void Traverse(Msg *h);
+    void PrintTenChars (Msg * msg);
+    int displayInbox;
 
 };
 

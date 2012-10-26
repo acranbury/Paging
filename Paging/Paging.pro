@@ -15,17 +15,18 @@ SOURCES += main.cpp \
     senderwindow.cpp \
     receiverwindow.cpp \
     Playback.cpp \
-    heappriority.c \
     rs232.cpp \
     TxtMessage.c \
-    pollingworker.cpp
+    pollingworker.cpp \
+    poisson.c
 
 HEADERS  += senderwindow.h \
     receiverwindow.h \
     playback.h \
     rs232.h \
     TxtMessage.h \
-    pollingworker.h
+    pollingworker.h \
+    poisson.h
 
 FORMS    += senderwindow.ui \
     receiverwindow.ui

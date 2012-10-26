@@ -67,11 +67,11 @@ int SetUpDCB(int baudRate)
     }
 
 
-    timeouts.ReadIntervalTimeout = 50;
-    timeouts.ReadTotalTimeoutMultiplier = 10;
-    timeouts.ReadTotalTimeoutConstant = 100;
-    timeouts.WriteTotalTimeoutMultiplier = 10;
-    timeouts.WriteTotalTimeoutConstant = 100;
+    timeouts.ReadIntervalTimeout = 100;
+    timeouts.ReadTotalTimeoutMultiplier = 20;
+    timeouts.ReadTotalTimeoutConstant = 200;
+    timeouts.WriteTotalTimeoutMultiplier = 20;
+    timeouts.WriteTotalTimeoutConstant = 200;
 
     if (!SetCommTimeouts(hComm, &timeouts))
     {

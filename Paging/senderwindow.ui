@@ -280,7 +280,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="testMenu">
     <property name="geometry">
      <rect>
       <x>100</x>
@@ -307,6 +307,19 @@
     </property>
     <property name="checked">
      <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="poissonBtn">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>260</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Poisson</string>
     </property>
    </widget>
   </widget>

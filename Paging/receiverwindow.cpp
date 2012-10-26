@@ -18,9 +18,11 @@ ReceiverWindow::ReceiverWindow(QWidget *parent) :
     connect(ui->audioBtn, SIGNAL(clicked()), this, SLOT(Playback()));
     connect(ui->refreshBtn, SIGNAL(clicked()), this, SLOT(Refresh()));
     connect(ui->archiveBtn, SIGNAL(clicked()), this, SLOT(Archive()));
+    connect(ui->readBtn, SIGNAL(clicked()), this, SLOT(UpdateQueueWindow()));
 
     // open RS232 port
     OpenRS232Port();
+    displayInbox = 0;
 
 
 }
@@ -28,13 +30,17 @@ ReceiverWindow::ReceiverWindow(QWidget *parent) :
 // cleans up the receiver window
 ReceiverWindow::~ReceiverWindow()
 {
+    poller->SetIsFinished(1);
     delete ui;
-    delete poller;
-    delete thread;
+
 
     // close rs232 port
     CloseRS232Port();
 
+    if (thread->isFinished()){
+        delete poller;
+        delete thread;
+    }
 }
 
 void ReceiverWindow::StartPoller()
@@ -54,19 +60,41 @@ void ReceiverWindow::StartPoller()
 
 void ReceiverWindow::HandleTextChange(QString message)
 {
-    ui->msgTxt->setText(QString("%1%2").arg(this->GetMsgText(), message));
-    QMessageBox::information(NULL, "Info", message);
+    ui->msgTxt->append(message);
+    //QMessageBox::information(NULL, "Info", message);
 }
 
 void ReceiverWindow::HandleLabelChange(QString message)
 {
+    // update number of messages
     ui->msgNumLbl->setText(message);
+    // clear the text box
+    ui->msgTxt->clear();
+    // Print all messages in the queue.
+    Traverse(head);
 }
 
 // displays the error of the polling thread
 void ReceiverWindow::HandleErrors(QString error, int code)
 {
     QMessageBox::information(NULL, "Error", QString("Message: %1 Code: %2").arg(error, QString::number(code)));
+}
+
+
+// Traverse list and print messages in order.
+void ReceiverWindow::Traverse(Msg *h) {
+    if ( h == NULL ) return;
+    this->PrintTenChars(h);
+    Traverse(h->next);
+}
+// Visit function, simply prints the message at that node.
+void ReceiverWindow::PrintTenChars (Msg * msg){
+    int i;
+    ui->msgTxt->append(QString("%1").arg(QString::number(msg->msgNum)));
+
+    ui->msgTxt->append(QString(msg->txt));
+
+    ui->msgTxt->append(QString("\n"));
 }
 
 // saves the message on the top of the current queue to a file
@@ -94,6 +122,26 @@ void ReceiverWindow::Playback()
 int ReceiverWindow::GetBaudRate()
 {
     return ui->baudRateCmb->itemText(ui->baudRateCmb->currentIndex()).toInt();
+}
+void ReceiverWindow::UpdateQueueWindow()
+{
+    //
+    if (displayInbox)
+    {
+        ui->msgTxt->clear();
+        Traverse(head);
+        displayInbox = 0;
+        ui->readBtn->setText(QString("Read"));
+    }
+    else
+    {
+        Msg *message = DeleteFromQueue();
+        ui->msgTxt->setText(QString(message->txt));
+        displayInbox = 1;
+        ui->readBtn->setText(QString("Inbox"));
+        ui->msgNumLbl->setText(QString("Number of Messages: %1").arg(QString::number(numberOfMessages)));
+        free (message);
+    }
 }
 
 // restarts the polling thread if need be

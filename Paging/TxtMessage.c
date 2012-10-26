@@ -56,7 +56,7 @@ int numberOfMessages = 0;
 	
 }*/
 
-/*void GetMessageFromFile (char *buffer, int iLen) {
+void GetMessageFromFile (char *buffer, int iLen) {
 	FILE *fp;
 	int i;
 	int shortMsg = 0;
@@ -120,7 +120,7 @@ int numberOfMessages = 0;
 
 	// close the file
 	fclose(fp);
-}*/
+}
 
 
 void InitQueue (void) {
@@ -144,6 +144,7 @@ void AddToQueue (Msg *newMsg) {
     numberOfMessages++;
 
 }
+
 
 Msg *DeleteFromQueue (void) {
 	Msg * temp;

@@ -45,4 +45,5 @@ Msg *DeleteFromQueue (void);
 
 
 
+
 #endif // TXTMESSAGE_H
