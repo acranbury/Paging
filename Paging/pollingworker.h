@@ -7,7 +7,6 @@
 #include <QCheckBox>
 #include <Windows.h>
 #include <QMessageBox>
-#include "pollingworker.h"
 #include "rs232.h"
 extern "C"
 {
@@ -19,22 +18,22 @@ class PollingWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit PollingWorker(int ibaudRate, QLabel * numMsgs, QTextEdit *msgTextBox, QCheckBox *msgCheck);
+    explicit PollingWorker(int ibaudRate, QCheckBox * rawText);
     ~PollingWorker();
     void SetBaudRate(int ibaudRate);
     int GetBaudRate();
     
 signals:
     void finished();
-    void error(QString err);
+    void error(QString err, int code);
+    void labelEdit(QString message);
+    void messageEdit(QString message);
     
 public slots:
     void PollRS232();
     
 private:
     int baudRate;
-    QLabel * msgLabel;
-    QTextEdit * msgText;
     QCheckBox * isRaw;
 };
 

@@ -13,8 +13,8 @@ int SetUpDCB(int baudRate);
 void ReadFromRS232(BYTE * readBuf, DWORD *numBytesTransferred);
 void CloseRS232Port();
 
-static HANDLE hComm;
-static DCB portDCB;
+extern HANDLE hComm;
+extern DCB portDCB;
 static COMMTIMEOUTS timeouts;
 
 #endif // RS232_H

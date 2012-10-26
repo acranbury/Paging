@@ -35,17 +35,21 @@ int main(int argc, char *argv[])
     {
         QMessageBox::information(NULL, "Defaulting...", "Defaulting to Sender");
         r.show();
+<<<<<<< HEAD
+=======
+        r.StartPoller();
+>>>>>>> github/master
     }
-    if(r.isVisible())
+    /*if(r.isVisible())
     {
-        /*QThread *thread = new QThread;
+        QThread *thread = new QThread;
         PollingWorker *poller = new PollingWorker(r.GetBaudRate(), r.pmsgLabel, r.ptextEdit, r.pRawData);
         poller->moveToThread(thread);
         thread->connect(thread, SIGNAL(started()), poller, SLOT(PollRS232()), Qt::QueuedConnection);
         poller->connect(poller, SIGNAL(finished()), thread, SLOT(quit()), Qt::QueuedConnection);
         poller->connect(poller, SIGNAL(finished()), poller, SLOT(deleteLater()), Qt::QueuedConnection);
         thread->connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()), Qt::QueuedConnection);
-        thread->start();*/
-    }
+        thread->start();
+    }*/
     return a.exec();
 }

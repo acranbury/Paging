@@ -22,14 +22,29 @@ ReceiverWindow::ReceiverWindow(QWidget *parent) :
     // open RS232 port
     OpenRS232Port();
 
-    ptextEdit = ui->msgTxt;
-    pmsgLabel = ui->msgNumLbl;
-    pRawData = ui->rawModeChk;
 
+}
+
+// cleans up the receiver window
+ReceiverWindow::~ReceiverWindow()
+{
+    delete ui;
+    delete poller;
+    delete thread;
+
+    // close rs232 port
+    CloseRS232Port();
+
+}
+
+void ReceiverWindow::StartPoller()
+{
     thread = new QThread;
-    poller = new PollingWorker(this->GetBaudRate(), ui->msgNumLbl, ui->msgTxt, ui->rawModeChk);
+    poller = new PollingWorker(this->GetBaudRate(), ui->rawModeChk);
     poller->moveToThread(thread);
-    connect(poller, SIGNAL(error(QString)), this, SLOT(HandleErrors(QString error)));
+    connect(poller, SIGNAL(error(QString, int)), this, SLOT(HandleErrors(QString, int)));
+    connect(poller, SIGNAL(labelEdit(QString)), this, SLOT(HandleLabelChange(QString)));
+    connect(poller, SIGNAL(messageEdit(QString)), this, SLOT(HandleTextChange(QString)));
     connect(thread, SIGNAL(started()), poller, SLOT(PollRS232()));
     connect(poller, SIGNAL(finished()), thread, SLOT(quit()));
     connect(poller, SIGNAL(finished()), poller, SLOT(deleteLater()));
@@ -37,23 +52,21 @@ ReceiverWindow::ReceiverWindow(QWidget *parent) :
     thread->start();
 }
 
-// cleans up the receiver window
-ReceiverWindow::~ReceiverWindow()
+void ReceiverWindow::HandleTextChange(QString message)
 {
-    delete ui;
+    ui->msgTxt->setText(QString("%1%2").arg(this->GetMsgText(), message));
+    QMessageBox::information(NULL, "Info", message);
+}
 
-    // stop the thread from polling rs232
-    //thread->~QThread();
-    //poller->~PollingWorker();
-    // close rs232 port
-    CloseRS232Port();
-
+void ReceiverWindow::HandleLabelChange(QString message)
+{
+    ui->msgNumLbl->setText(message);
 }
 
 // displays the error of the polling thread
-void ReceiverWindow::HandleErrors(QString error)
+void ReceiverWindow::HandleErrors(QString error, int code)
 {
-    QMessageBox::information(NULL, "Error", error);
+    QMessageBox::information(NULL, "Error", QString("Message: %1 Code: %2").arg(error, QString::number(code)));
 }
 
 // saves the message on the top of the current queue to a file
@@ -89,12 +102,7 @@ void ReceiverWindow::Refresh()
     if(poller->GetBaudRate() != this->GetBaudRate())
         poller->SetBaudRate(this->GetBaudRate());
     if(!thread->isRunning())
-        poller->moveToThread(thread);
-        connect(thread, SIGNAL(started()), poller, SLOT(PollRS232()));
-        connect(poller, SIGNAL(finished()), thread, SLOT(quit()));
-        connect(poller, SIGNAL(finished()), poller, SLOT(deleteLater()));
-        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-        thread->start();
+        this->StartPoller();
 }
 
 // gets the text of the text box
