@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     SenderWindow s;
-    //ReceiverWindow r;
+    ReceiverWindow r;
 
     if(argc > 1)
     {
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     else
     {
         QMessageBox::information(NULL, "Defaulting...", "Defaulting to Sender");
-        s.show();
+        r.show();
     }
     if(r.isVisible())
     {

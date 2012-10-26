@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'receiverwindow.ui'
 **
-** Created: Thu Oct 25 13:53:34 2012
+** Created: Thu Oct 25 17:21:04 2012
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
