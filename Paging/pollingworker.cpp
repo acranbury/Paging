@@ -30,7 +30,7 @@ void PollingWorker::PollRS232()
     long numBytesToGet;
     DWORD dwCommEvent, dwBytesTransferred;
     Msg * newMsg;
-    while(1)
+    while(isRaw->isVisible())
     {
         // set up the mask, EV_RXCHAR is the event when we receive a character
         if (!SetCommMask(hComm, EV_RXCHAR))
@@ -46,7 +46,8 @@ void PollingWorker::PollRS232()
             if(!isRaw->isChecked())
             {
                 // set up the header buffer
-                headerBuffer = (Header *)malloc(sizeof(struct Header));
+                if(!(headerBuffer = (Header *)malloc(sizeof(struct Header))))
+                        emit error(QString("Error malloccing headerBuffer."), (int)GetLastError());
                 if(!ReadFile(hComm, (BYTE *)headerBuffer, HEADERSIZE, &dwBytesTransferred, 0))
                     emit error(QString("Error setting up the header buffer."), (int)GetLastError());
 
@@ -62,7 +63,8 @@ void PollingWorker::PollRS232()
 
                     // create a new message structure and put it on the queue
                     // not all the header options we need are available - ask Jack!
-                    newMsg = (Msg *)malloc(sizeof(struct message));
+                    if(!(newMsg = (Msg *)malloc(sizeof(struct message))))
+                        emit error(QString("Error malloccing newMsg."), (int)GetLastError());
                     strcpy(newMsg->txt, readBuf);
                     newMsg->senderID = headerBuffer->bSenderAddr;
                     newMsg->receiverID = headerBuffer->bReceiverAddr;
@@ -75,8 +77,10 @@ void PollingWorker::PollRS232()
             {
                 do
                 {
-                    rawByte = (char *)malloc(sizeof(char));
-                    if(!ReadFile(hComm, rawByte, 1, &dwBytesTransferred, 0))
+                    if(!(rawByte = (char *)calloc(512, sizeof(char))))
+                        emit error(QString("Error malloccing rawByte."), (int)GetLastError());
+
+                    if(!ReadFile(hComm, rawByte, 512, &dwBytesTransferred, 0))
                         emit error(QString("Error getting the raw data."), (int)GetLastError());
 
                     if(dwBytesTransferred != 0)
