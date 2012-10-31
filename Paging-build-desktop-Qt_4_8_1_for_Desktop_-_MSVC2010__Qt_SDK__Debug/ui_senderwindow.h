@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'senderwindow.ui'
 **
-** Created: Thu Oct 25 17:56:09 2012
+** Created: Fri Oct 26 14:16:26 2012
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -48,8 +48,9 @@ public:
     QComboBox *baudRateCmb;
     QLabel *msgPriorityLbl;
     QComboBox *msgPriorityCmb;
-    QPushButton *pushButton;
+    QPushButton *testMenu;
     QCheckBox *headerChk;
+    QPushButton *poissonBtn;
     QMenuBar *menuBar;
 
     void setupUi(QMainWindow *SenderWindow)
@@ -113,13 +114,16 @@ public:
         msgPriorityCmb = new QComboBox(centralWidget);
         msgPriorityCmb->setObjectName(QString::fromUtf8("msgPriorityCmb"));
         msgPriorityCmb->setGeometry(QRect(100, 120, 51, 22));
-        pushButton = new QPushButton(centralWidget);
-        pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        pushButton->setGeometry(QRect(100, 250, 75, 23));
+        testMenu = new QPushButton(centralWidget);
+        testMenu->setObjectName(QString::fromUtf8("testMenu"));
+        testMenu->setGeometry(QRect(100, 250, 75, 23));
         headerChk = new QCheckBox(centralWidget);
         headerChk->setObjectName(QString::fromUtf8("headerChk"));
         headerChk->setGeometry(QRect(180, 250, 70, 17));
         headerChk->setChecked(true);
+        poissonBtn = new QPushButton(centralWidget);
+        poissonBtn->setObjectName(QString::fromUtf8("poissonBtn"));
+        poissonBtn->setGeometry(QRect(280, 260, 75, 23));
         SenderWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(SenderWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -162,8 +166,9 @@ public:
          << QApplication::translate("SenderWindow", "115200", 0, QApplication::UnicodeUTF8)
         );
         msgPriorityLbl->setText(QApplication::translate("SenderWindow", "Message Priority", 0, QApplication::UnicodeUTF8));
-        pushButton->setText(QApplication::translate("SenderWindow", "Testing Menu", 0, QApplication::UnicodeUTF8));
+        testMenu->setText(QApplication::translate("SenderWindow", "Testing Menu", 0, QApplication::UnicodeUTF8));
         headerChk->setText(QApplication::translate("SenderWindow", "Headers", 0, QApplication::UnicodeUTF8));
+        poissonBtn->setText(QApplication::translate("SenderWindow", "Poisson", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
