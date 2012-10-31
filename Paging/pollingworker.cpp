@@ -58,13 +58,13 @@ void PollingWorker::PollRS232()
                 if(!ReadFile(hComm, (BYTE *)headerBuffer, HEADERSIZE, &dwBytesTransferred, 0))
                     emit error(QString("Error setting up the header buffer."), (int)GetLastError());
 
-                emit error(QString("size of header"), (int)(dwBytesTransferred));
+               // emit error(QString("size of header"), (int)(dwBytesTransferred));
 
                 // if the header is good, get the length of the message
                 if(headerBuffer->lSignature == 0xDEADBEEF && headerBuffer->bReceiverAddr == 0xFF)
                 {
                     numBytesToGet = headerBuffer->lDataLength;
-                    emit error(QString::number(numBytesToGet), 0);
+                   // emit error(QString::number(numBytesToGet), 0);
                     readBuf = (char*)calloc(numBytesToGet,sizeof(char));
                     if (readBuf == NULL)
                         emit error(QString("Error mallocing readBuf."), (int)GetLastError());
@@ -72,7 +72,7 @@ void PollingWorker::PollRS232()
                     // get the message
                     if(!ReadFile(hComm, readBuf, numBytesToGet, &dwBytesTransferred, 0))
                         emit error(QString("Error getting the message."), (int)GetLastError());
-                    emit error(QString(readBuf), (int)(dwBytesTransferred));
+                  //  emit error(QString(readBuf), (int)(dwBytesTransferred));
 
 
                     // create a new message structure and put it on the queue
