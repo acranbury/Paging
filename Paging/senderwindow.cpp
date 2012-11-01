@@ -8,6 +8,7 @@ extern "C"
 #include "TxtMessage.h"
 #include "poisson.h"
 #include "checksum.h"
+#include "huffman.h"
 }
 #include <time.h>
 
@@ -64,6 +65,10 @@ void SenderWindow::Record()
 {
     iBigBuf = (short *)malloc(sizeof(short) * g_nSamplesPerSec * RECORD_TIME);
     lBigBufSize = g_nSamplesPerSec * RECORD_TIME;	// in samples
+    if (iBigBuf == NULL)
+    {
+        QMessageBox::information(NULL, "Error!", "Malloc has failed.");
+    }
 
     InitializePlayback();
 
@@ -91,9 +96,11 @@ void SenderWindow::Playback()
 void SenderWindow::SendText()
 {
     char *textBuf;
+    char *originalText;
     long numChars;
     DWORD headerSize;
     headerSize = HEADERSIZE;
+    int datasize;
 
     SetUpDCB(this->GetBaudRate());
 
@@ -101,19 +108,35 @@ void SenderWindow::SendText()
     QByteArray ba = this->GetMsgText().toAscii();
     textBuf = ba.data();
 
+    // Used for Decompression at other end.
+    originalText = textBuf;
+
     // get the number of characters in the array
     numChars = (long)this->GetMsgText().length() + 1;
+
+    // If huffman encoding has been selected, encode it.
+    if (!(QString::compare("huffman", ui->compressCmb->itemText(ui->compressCmb->currentIndex()), Qt::CaseInsensitive)))
+    {
+        datasize = Huffman_Compress((unsigned char*)originalText, (unsigned char*)textBuf, numChars);
+        textBuf[datasize] = NULL;
+    }
 
     if (ui->headerChk->isChecked()){
 
         Header *msgHeader = (Header *)malloc(sizeof(Header));
+        if (msgHeader == NULL)
+        {
+            QMessageBox::information(NULL, "Error!", "Malloc has failed.");
+        }
         // populate header
         msgHeader->lSignature = 0xDEADBEEF;
-        msgHeader->bReceiverAddr = 0xFF;
-        msgHeader->bVersion = 0;
-        msgHeader->lDataLength = numChars;
+        msgHeader->lReceiverAddr = 0xFFFFFFFF;
+        msgHeader->bVersion = 0xFF;
+        msgHeader->lDataLength = datasize;
+        msgHeader->lDataUncompressed = numChars;
         msgHeader->bSenderAddr = DEFSENDER; //For now, should change this to variable/ link with button
         msgHeader->lPattern = 0xAA55AA55;
+        msgHeader->bDataType = 0;
 
 
         if(!WriteToRS232((BYTE *)msgHeader, &headerSize)){
@@ -123,6 +146,57 @@ void SenderWindow::SendText()
     }
     if(!WriteToRS232((BYTE *)textBuf, (DWORD *)&numChars))
         QMessageBox::information(NULL, "Error!", "Write data to RS232 failed");
+}
+
+// send voice via RS232
+void SenderWindow::SendVoice()
+{
+    char *voiceBuf;
+    DWORD headerSize;
+    headerSize = HEADERSIZE;
+    int datasize;
+
+    voiceBuf = (char*)malloc (sizeof(char)*lBigBufSize);
+
+    if (voiceBuf == NULL)
+    {
+        QMessageBox::information(NULL, "Error!", "Malloc has failed.");
+    }
+
+    SetUpDCB(this->GetBaudRate());
+
+    // If huffman encoding has been selected, encode it.
+    if (!(QString::compare("huffman", ui->compressCmb->itemText(ui->compressCmb->currentIndex()), Qt::CaseInsensitive)))
+    {
+        datasize = Huffman_Compress((unsigned char*)iBigBuf, (unsigned char*)voiceBuf, lBigBufSize);
+        voiceBuf[datasize] = NULL;
+    }
+
+
+
+    Header *msgHeader = (Header *)malloc(sizeof(Header));
+    if (msgHeader == NULL)
+    {
+        QMessageBox::information(NULL, "Error!", "Malloc has failed.");
+    }
+    // populate header
+    msgHeader->lSignature = 0xDEADBEEF;
+    msgHeader->lReceiverAddr = 0xFFFFFFFF;
+    msgHeader->bVersion = 0xFF;
+    msgHeader->lDataLength = datasize;
+    msgHeader->lDataUncompressed = lBigBufSize;
+    msgHeader->bSenderAddr = DEFSENDER; //For now, should change this to variable/ link with button
+    msgHeader->lPattern = 0xAA55AA55;
+    msgHeader->bDataType = 0xFF;
+
+
+    if(!WriteToRS232((BYTE *)msgHeader, &headerSize)){
+        QMessageBox::information(NULL, "Error!", "Write header to RS232 failed");
+        return;
+    }
+
+    if(!WriteToRS232((BYTE *)voiceBuf, (DWORD *)&lBigBufSize))
+        QMessageBox::information(NULL, "Error!", "Write voice to RS232 failed");
 }
 void SenderWindow::SendPoisson()
 {
@@ -152,13 +226,18 @@ void SenderWindow::SendPoisson()
             if (ui->headerChk->isChecked()){
 
                 Header *msgHeader = (Header *)malloc(sizeof(Header));
+                if (msgHeader == NULL)
+                {
+                    QMessageBox::information(NULL, "Error!", "Malloc has failed.");
+                }
                 // populate header
                 msgHeader->lSignature = 0xDEADBEEF;
-                msgHeader->bReceiverAddr = 0xFF;
+                msgHeader->lReceiverAddr = 0xFF;
                 msgHeader->bVersion = 0;
                 msgHeader->lDataLength = numChars;
                 msgHeader->bSenderAddr = DEFSENDER; //For now, should change this to variable/ link with button
                 msgHeader->lPattern = 0xAA55AA55;
+                msgHeader->bDataType = 0;
 
 
                 if(!WriteToRS232((BYTE *)msgHeader, &headerSize))

@@ -1,5 +1,7 @@
 #include "pollingworker.h"
 
+
+
 PollingWorker::PollingWorker(int ibaudRate, QCheckBox * rawText)
 {
     baudRate = ibaudRate;
@@ -30,6 +32,7 @@ void PollingWorker::PollRS232()
 {
     char * readBuf;
     char * rawByte;
+    char * original;
     Header * headerBuffer;    
     long numBytesToGet;
     DWORD dwCommEvent, dwBytesTransferred;
@@ -58,13 +61,13 @@ void PollingWorker::PollRS232()
                 if(!ReadFile(hComm, (BYTE *)headerBuffer, HEADERSIZE, &dwBytesTransferred, 0))
                     emit error(QString("Error setting up the header buffer."), (int)GetLastError());
 
-                emit error(QString("size of header"), (int)(dwBytesTransferred));
+               // emit error(QString("size of header"), (int)(dwBytesTransferred));
 
                 // if the header is good, get the length of the message
-                if(headerBuffer->lSignature == 0xDEADBEEF && headerBuffer->bReceiverAddr == 0xFF)
+                if(headerBuffer->lSignature == 0xDEADBEEF && headerBuffer->lReceiverAddr == 0xFF)
                 {
                     numBytesToGet = headerBuffer->lDataLength;
-                    emit error(QString::number(numBytesToGet), 0);
+                   // emit error(QString::number(numBytesToGet), 0);
                     readBuf = (char*)calloc(numBytesToGet,sizeof(char));
                     if (readBuf == NULL)
                         emit error(QString("Error mallocing readBuf."), (int)GetLastError());
@@ -72,20 +75,34 @@ void PollingWorker::PollRS232()
                     // get the message
                     if(!ReadFile(hComm, readBuf, numBytesToGet, &dwBytesTransferred, 0))
                         emit error(QString("Error getting the message."), (int)GetLastError());
-                    emit error(QString(readBuf), (int)(dwBytesTransferred));
+                  //  emit error(QString(readBuf), (int)(dwBytesTransferred));
 
 
-                    // create a new message structure and put it on the queue
-                    // not all the header options we need are available - ask Jack!
-                    if(!(newMsg = (Msg *)malloc(sizeof(struct message))))
-                        emit error(QString("Error malloccing newMsg."), (int)GetLastError());
+                    if (headerBuffer->bVersion == 0xFF)
+                    {
+                        Huffman_Uncompress((unsigned char*)original, (unsigned char*)readBuf, numBytesToGet, headerBuffer->lDataLength);
+                        // For testing purposes.
+                        emit error (QString("Here is the compressed data %1").arg(original), (int)GetLastError());
+                    }
 
-                    strcpy(newMsg->txt, readBuf);
-                    newMsg->senderID = headerBuffer->bSenderAddr;
-                    newMsg->receiverID = headerBuffer->bReceiverAddr;
-                    newMsg->msgNum = rand() % 100;
-                    AddToQueue(newMsg);
-                    emit labelEdit(QString("Number of Messages: %1").arg(numberOfMessages));
+
+                    if (headerBuffer->bDataType == 0){ // If the data is text.
+                        // create a new message structure and put it on the queue
+                        // not all the header options we need are available - ask Jack!
+                        if(!(newMsg = (Msg *)malloc(sizeof(struct message))))
+                            emit error(QString("Error malloccing newMsg."), (int)GetLastError());
+
+                        strcpy(newMsg->txt, readBuf);
+                        newMsg->senderID = headerBuffer->bSenderAddr;
+                        newMsg->receiverID = headerBuffer->lReceiverAddr;
+                        newMsg->msgNum = rand() % 100;
+                        AddToQueue(newMsg);
+                        emit labelEdit(QString("Number of Messages: %1").arg(numberOfMessages));
+                    }
+                    else
+                    {
+                        emit audioReceived(headerBuffer->lDataUncompressed, readBuf);
+                    }
                 }
             }
             else

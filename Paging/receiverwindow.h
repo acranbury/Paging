@@ -34,6 +34,7 @@ protected slots:
     void HandleErrors(QString error, int code);
     void HandleLabelChange(QString message);
     void HandleTextChange(QString message);
+    void HandleAudio(long audioSize, char* audio);
     void UpdateQueueWindow();       // handles updating messages in the textEdit
 
 private:

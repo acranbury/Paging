@@ -23,11 +23,13 @@ struct message {
 
 struct Header {
     long		lSignature;     // must be 0xDEADBEEF
-    BYTE		bReceiverAddr;	// receiver ID. 0xff=broadcast
-    BYTE		bVersion;		// must be 1 for version 1
+    long		lReceiverAddr;	// receiver ID. 0xff=broadcast
+    BYTE		bVersion;		// version 0 = no compression, version ff = huffman
     long		lDataLength;	// size of message
+    long        lDataUncompressed; //Size of original uncompressed data.
     BYTE        bSenderAddr;    // sender ID.
-    char		bTBD[17];		// to be determined
+    BYTE        bDataType;      // data type = 0, data is text. data type = ff, data is voice.
+    char		bTBD[8];		// to be determined
     long		lPattern;	// must be 0xaa 0x55 0xaa 0x55
 };
 

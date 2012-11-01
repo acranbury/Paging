@@ -86,7 +86,7 @@ int SetUpDCB(int baudRate)
 int WriteToRS232(BYTE * writeBuf, DWORD *bufSize)
 {
     // write the file to
-    QMessageBox::information(NULL, "Success!",QString ("%1 %2").arg(QString ((char *)writeBuf),QString::number((int)*bufSize)));
+    //QMessageBox::information(NULL, "Success!",QString ("%1 %2").arg(QString ((char *)writeBuf),QString::number((int)*bufSize)));
 
     int result = WriteFile(hComm,
                            writeBuf,

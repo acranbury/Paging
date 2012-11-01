@@ -27,6 +27,7 @@ protected slots:
     void Playback();
     void SendText();
     void SendPoisson();
+    void SendVoice();
 
 private:
     Ui::SenderWindow *ui;
