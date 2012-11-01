@@ -30,6 +30,7 @@ protected slots:
 
 private:
     Ui::SenderWindow *ui;
+    long CalculateChecksum(char *buffer);
 
 };
 

@@ -7,6 +7,7 @@ extern "C"
 {
 #include "TxtMessage.h"
 #include "poisson.h"
+#include "checksum.h"
 }
 #include <time.h>
 

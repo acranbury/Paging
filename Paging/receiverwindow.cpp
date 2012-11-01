@@ -5,7 +5,12 @@
 #include "ui_receiverwindow.h"
 #include "playback.h"
 #include "rs232.h"
+extern "C"
+{
 #include "TxtMessage.h"
+#include "checksum.h"
+}
+
 
 
 ReceiverWindow::ReceiverWindow(QWidget *parent) :
