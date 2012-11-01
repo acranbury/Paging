@@ -11,8 +11,8 @@
 extern "C"
 {
 #include "TxtMessage.h"
+#include "huffman.h"
 }
-
 
 class PollingWorker : public QObject
 {
@@ -29,6 +29,7 @@ signals:
     void error(QString err, int code);
     void labelEdit(QString message);
     void messageEdit(QString message);
+    void audioReceived (long lBigBufSize, char * BigBuf);
     
 public slots:
     void PollRS232();

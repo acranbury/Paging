@@ -51,6 +51,7 @@ void ReceiverWindow::StartPoller()
     connect(poller, SIGNAL(error(QString, int)), this, SLOT(HandleErrors(QString, int)));
     connect(poller, SIGNAL(labelEdit(QString)), this, SLOT(HandleLabelChange(QString)));
     connect(poller, SIGNAL(messageEdit(QString)), this, SLOT(HandleTextChange(QString)));
+    connect(poller, SIGNAL(audioReceived(long,char*)), this, SLOT(HandleAudio(long, char*)));
     connect(thread, SIGNAL(started()), poller, SLOT(PollRS232()));
     connect(poller, SIGNAL(finished()), thread, SLOT(quit()));
     connect(poller, SIGNAL(finished()), poller, SLOT(deleteLater()));
@@ -62,6 +63,12 @@ void ReceiverWindow::HandleTextChange(QString message)
 {
     ui->msgTxt->append(message);
     //QMessageBox::information(NULL, "Info", message);
+}
+void ReceiverWindow::HandleAudio(long audioSize, char* audio)
+{
+    lBigBufSize = audioSize;
+    iBigBuf = (short *)audio;
+    QMessageBox::information(NULL,"Audio Broadcast Received", "You have a new audio message, press 'Audio Messages'");
 }
 
 void ReceiverWindow::HandleLabelChange(QString message)
@@ -111,9 +118,9 @@ void ReceiverWindow::Archive()
 // plays back the audio buffer stored in iBigBuf
 void ReceiverWindow::Playback()
 {
-    this->SetMsgText(QString("Playing broadcast..."));
+    //this->SetMsgText(QString("Playing broadcast..."));
     PlayBuffer( iBigBuf, lBigBufSize );
-    this->SetMsgText(QString("%1\nDone.").arg(this->GetMsgText()));
+    //this->SetMsgText(QString("%1\nDone.").arg(this->GetMsgText()));
     ClosePlayback();
     free(iBigBuf);
 }

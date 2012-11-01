@@ -18,7 +18,8 @@ SOURCES += main.cpp \
     rs232.cpp \
     TxtMessage.c \
     pollingworker.cpp \
-    poisson.c
+    poisson.c \
+    huffman.c
 
 HEADERS  += senderwindow.h \
     receiverwindow.h \
@@ -26,7 +27,8 @@ HEADERS  += senderwindow.h \
     rs232.h \
     TxtMessage.h \
     pollingworker.h \
-    poisson.h
+    poisson.h \
+    huffman.h
 
 FORMS    += senderwindow.ui \
     receiverwindow.ui
