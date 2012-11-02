@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     TxtMessage.c \
     pollingworker.cpp \
     poisson.c \
-    checksum.c
+    checksum.c \
+    bst.c \
     huffman.c
 
 HEADERS  += senderwindow.h \
@@ -29,8 +30,10 @@ HEADERS  += senderwindow.h \
     TxtMessage.h \
     pollingworker.h \
     poisson.h \
-    checksum.h
+    checksum.h \
+    bst.h \
     huffman.h
+
 
 FORMS    += senderwindow.ui \
     receiverwindow.ui

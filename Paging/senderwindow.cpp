@@ -8,9 +8,9 @@ extern "C"
 #include "TxtMessage.h"
 #include "poisson.h"
 #include "checksum.h"
-#include "huffman.h"
 }
 #include <time.h>
+#include "huffman.h"
 
 static short *iBigBuf;      // audio buffer
 static long	 lBigBufSize;	// in samples

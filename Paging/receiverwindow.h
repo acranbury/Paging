@@ -5,7 +5,10 @@
 #include <Windows.h>
 #include <QThread>
 #include "pollingworker.h"
-
+extern "C"
+{
+#include "bst.h"
+}
 namespace Ui {
 class ReceiverWindow;
 }
@@ -36,8 +39,11 @@ protected slots:
     void HandleTextChange(QString message);
     void HandleAudio(long audioSize, char* audio);
     void UpdateQueueWindow();       // handles updating messages in the textEdit
+    void DisplayPhonebook();
+
 
 private:
+    void BSTPrint(TreeNode * treeRoot);
     Ui::ReceiverWindow *ui;
     short *iBigBuf;          // pointer to audio buffer
     long lBigBufSize;       // audio playback buffer size
@@ -46,6 +52,8 @@ private:
     void Traverse(Msg *h);
     void PrintTenChars (Msg * msg);
     int displayInbox;
+    int displayTree;
+
 
 };
 
