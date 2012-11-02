@@ -1,6 +1,6 @@
 #ifndef CHECKSUM_H
 #define CHECKSUM_H
 
-int CalculateChecksum(char *buffer, int bytes);
+long CalculateChecksum(short *buffer, long bytes);
 
 #endif // CHECKSUM_H

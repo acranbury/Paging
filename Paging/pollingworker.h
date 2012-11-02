@@ -30,6 +30,7 @@ signals:
     void labelEdit(QString message);
     void messageEdit(QString message);
     void audioReceived (long lBigBufSize, char * BigBuf);
+    void transmitError();
     
 public slots:
     void PollRS232();
@@ -38,6 +39,8 @@ private:
     int baudRate;
     QCheckBox * isRaw;
     int isFinish;
+    char GetHammingDistance(char x, char y);
+    char GetReceiverId(char lReceiverAdd[3]);
 };
 
 #endif // POLLINGWORKER_H

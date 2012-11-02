@@ -130,7 +130,8 @@ void SenderWindow::SendText()
         }
         // populate header
         msgHeader->lSignature = 0xDEADBEEF;
-        msgHeader->lReceiverAddr = 0xFFFFFFFF;
+        for(int i = 0; i < 3; i++)
+            msgHeader->lReceiverAddr[i] = 0xFF;
         msgHeader->bVersion = 0xFF;
         msgHeader->lDataLength = datasize;
         msgHeader->lDataUncompressed = numChars;
@@ -181,13 +182,15 @@ void SenderWindow::SendVoice()
     }
     // populate header
     msgHeader->lSignature = 0xDEADBEEF;
-    msgHeader->lReceiverAddr = 0xFFFFFFFF;
+    for(int i = 0; i < 3; i++)
+        msgHeader->lReceiverAddr[i] = 0xFF;
     msgHeader->bVersion = 0xFF;
     msgHeader->lDataLength = datasize;
     msgHeader->lDataUncompressed = lBigBufSize;
     msgHeader->bSenderAddr = DEFSENDER; //For now, should change this to variable/ link with button
     msgHeader->lPattern = 0xAA55AA55;
     msgHeader->bDataType = 0xFF;
+    msgHeader->sChecksum = CalculateChecksum((short*)voiceBuf, datasize);
 
 
     if(!WriteToRS232((BYTE *)msgHeader, &headerSize)){
@@ -195,9 +198,13 @@ void SenderWindow::SendVoice()
         return;
     }
 
-    if(!WriteToRS232((BYTE *)voiceBuf, (DWORD *)&lBigBufSize))
+    if(!WriteToRS232((BYTE *)voiceBuf, (DWORD *)&datasize))
+    {
         QMessageBox::information(NULL, "Error!", "Write voice to RS232 failed");
+    }
 }
+
+// Sends messages automatically according to the poisson distribution
 void SenderWindow::SendPoisson()
 {
     float lambda = LAMBDA;
@@ -232,7 +239,8 @@ void SenderWindow::SendPoisson()
                 }
                 // populate header
                 msgHeader->lSignature = 0xDEADBEEF;
-                msgHeader->lReceiverAddr = 0xFF;
+                for(int i = 0; i < 3; i++)
+                    msgHeader->lReceiverAddr[i] = 0xFF;
                 msgHeader->bVersion = 0;
                 msgHeader->lDataLength = numChars;
                 msgHeader->bSenderAddr = DEFSENDER; //For now, should change this to variable/ link with button

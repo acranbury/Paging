@@ -1,4 +1,8 @@
 #include "pollingworker.h"
+extern "C"
+{
+#include "checksum.h"
+}
 
 
 
@@ -28,13 +32,59 @@ void PollingWorker::SetIsFinished(int finish)
     isFinish = finish;
 }
 
+// returns the hamming distance of two integers
+char PollingWorker::GetHammingDistance(char x, char y)
+{
+    char dist = 0;
+    char val = x ^ y;
+
+    // count the number of set bits
+    while(val)
+    {
+        ++dist;
+        val &= val - 1;
+    }
+
+    return dist;
+}
+
+// extracts the receiver id from the repeated one in the header
+char PollingWorker::GetReceiverId(char lReceiverAdd[3])
+{
+    char hamming[3];
+    hamming[0] = this->GetHammingDistance(lReceiverAdd[0], lReceiverAdd[1]);
+    hamming[1] = this->GetHammingDistance(lReceiverAdd[0], lReceiverAdd[2]);
+    hamming[2] = this->GetHammingDistance(lReceiverAdd[1], lReceiverAdd[2]);
+
+    if(hamming[0] == 0)
+    {
+        return lReceiverAdd[0];
+    }else if(hamming[1] == 0)
+    {
+        return lReceiverAdd[0];
+    }else if(hamming[2] == 0)
+    {
+        return lReceiverAdd[1];
+    }else
+    {
+        // place holder for actual receiver id stuff, dont have it yet
+        if(lReceiverAdd[0] == 0xFF || lReceiverAdd[1] == 0xFF || lReceiverAdd[2] == 0xFF)
+            return 0xFF;
+        else
+            return 0x00;
+    }
+
+
+}
+
 void PollingWorker::PollRS232()
 {
     char * readBuf;
     char * rawByte;
-    char * original;
+    char * unCompressed;
     Header * headerBuffer;    
     long numBytesToGet;
+    char receiveID;
     DWORD dwCommEvent, dwBytesTransferred;
     Msg * newMsg;
     isFinish = 0;
@@ -64,7 +114,7 @@ void PollingWorker::PollRS232()
                // emit error(QString("size of header"), (int)(dwBytesTransferred));
 
                 // if the header is good, get the length of the message
-                if(headerBuffer->lSignature == 0xDEADBEEF && headerBuffer->lReceiverAddr == 0xFF)
+                if(headerBuffer->lSignature == 0xDEADBEEF && (receiveID = GetReceiverId(headerBuffer->lReceiverAddr)) == 0xFF)
                 {
                     numBytesToGet = headerBuffer->lDataLength;
                    // emit error(QString::number(numBytesToGet), 0);
@@ -77,14 +127,20 @@ void PollingWorker::PollRS232()
                         emit error(QString("Error getting the message."), (int)GetLastError());
                   //  emit error(QString(readBuf), (int)(dwBytesTransferred));
 
+                    // calculate the checksum and compare
+                    if(headerBuffer->sChecksum == CalculateChecksum((short*)readBuf, headerBuffer->lDataLength))
+                    {
+                        emit transmitError();
+                    }
 
                     if (headerBuffer->bVersion == 0xFF)
                     {
-                        Huffman_Uncompress((unsigned char*)original, (unsigned char*)readBuf, numBytesToGet, headerBuffer->lDataLength);
+                        if(!(unCompressed = (char *)malloc(sizeof(char)*headerBuffer->lDataUncompressed)))
+                                emit error(QString("Error malloccing unCompressed."), (int)GetLastError());
+                        Huffman_Uncompress((unsigned char*)readBuf, (unsigned char*)unCompressed, headerBuffer->lDataLength, headerBuffer->lDataUncompressed);
                         // For testing purposes.
-                        emit error (QString("Here is the compressed data %1").arg(original), (int)GetLastError());
+                        emit error (QString("Here is the compressed data %1").arg(readBuf), (int)GetLastError());
                     }
-
 
                     if (headerBuffer->bDataType == 0){ // If the data is text.
                         // create a new message structure and put it on the queue
@@ -92,16 +148,17 @@ void PollingWorker::PollRS232()
                         if(!(newMsg = (Msg *)malloc(sizeof(struct message))))
                             emit error(QString("Error malloccing newMsg."), (int)GetLastError());
 
-                        strcpy(newMsg->txt, readBuf);
+                        strcpy(newMsg->txt, unCompressed);
                         newMsg->senderID = headerBuffer->bSenderAddr;
-                        newMsg->receiverID = headerBuffer->lReceiverAddr;
+                        newMsg->receiverID = (short)receiveID;
                         newMsg->msgNum = rand() % 100;
                         AddToQueue(newMsg);
+
                         emit labelEdit(QString("Number of Messages: %1").arg(numberOfMessages));
                     }
                     else
                     {
-                        emit audioReceived(headerBuffer->lDataUncompressed, readBuf);
+                        emit audioReceived(headerBuffer->lDataUncompressed, unCompressed);
                     }
                 }
             }

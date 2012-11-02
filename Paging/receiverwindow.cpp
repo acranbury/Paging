@@ -28,8 +28,7 @@ ReceiverWindow::ReceiverWindow(QWidget *parent) :
     // open RS232 port
     OpenRS232Port();
     displayInbox = 0;
-
-
+    transmitErrorCount = 0;
 }
 
 // cleans up the receiver window
@@ -92,6 +91,12 @@ void ReceiverWindow::HandleErrors(QString error, int code)
     QMessageBox::information(NULL, "Error", QString("Message: %1 Code: %2").arg(error, QString::number(code)));
 }
 
+
+void ReceiverWindow::HandleTransmitError()
+{
+    transmitErrorCount++;
+    ui->errorLbl->setText(QString("Errors: %1").arg(QString::number(transmitErrorCount)));
+}
 
 // Traverse list and print messages in order.
 void ReceiverWindow::Traverse(Msg *h) {
