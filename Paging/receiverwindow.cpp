@@ -5,10 +5,12 @@
 #include "ui_receiverwindow.h"
 #include "playback.h"
 #include "rs232.h"
+#include "huffman.h"
 extern "C"
 {
 #include "TxtMessage.h"
 #include "checksum.h"
+#include "bst.h"
 }
 
 
@@ -24,11 +26,13 @@ ReceiverWindow::ReceiverWindow(QWidget *parent) :
     connect(ui->refreshBtn, SIGNAL(clicked()), this, SLOT(Refresh()));
     connect(ui->archiveBtn, SIGNAL(clicked()), this, SLOT(Archive()));
     connect(ui->readBtn, SIGNAL(clicked()), this, SLOT(UpdateQueueWindow()));
+    connect(ui->phoneBookBtn, SIGNAL(clicked()), this, SLOT(DisplayPhonebook()));
 
     // open RS232 port
     OpenRS232Port();
     displayInbox = 0;
     transmitErrorCount = 0;
+    displayTree = 0;
 }
 
 // cleans up the receiver window
@@ -46,6 +50,7 @@ ReceiverWindow::~ReceiverWindow()
         delete thread;
     }
 }
+
 
 void ReceiverWindow::StartPoller()
 {
@@ -91,6 +96,30 @@ void ReceiverWindow::HandleErrors(QString error, int code)
     QMessageBox::information(NULL, "Error", QString("Message: %1 Code: %2").arg(error, QString::number(code)));
 }
 
+void ReceiverWindow::DisplayPhonebook()
+{
+    ui->msgTxt->clear();
+    if (displayTree)
+    {
+        ui->phoneBookBtn->setText(QString("Phonebook"));
+        displayTree = 0;
+    }
+    else
+    {
+        displayTree = 1;
+        BSTPrint(root);
+        ui->phoneBookBtn->setText(QString("Inbox"));
+    }
+}
+
+void ReceiverWindow::BSTPrint(TreeNode * treeRoot)
+{
+    if (treeRoot == NULL) return;		// reached leaf
+    BSTPrint( treeRoot->pLeft );
+    ui->msgTxt->append(QString ("Key: %1\n").arg(QString::number(treeRoot->item->key)));
+    BSTPrint( treeRoot->pRight );
+    return;
+}
 
 void ReceiverWindow::HandleTransmitError()
 {

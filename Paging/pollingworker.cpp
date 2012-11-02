@@ -2,8 +2,8 @@
 extern "C"
 {
 #include "checksum.h"
+#include "bst.h"
 }
-
 
 
 PollingWorker::PollingWorker(int ibaudRate, QCheckBox * rawText)
@@ -81,8 +81,9 @@ void PollingWorker::PollRS232()
 {
     char * readBuf;
     char * rawByte;
-    char * unCompressed;
-    Header * headerBuffer;    
+    char * unCompressed; 
+    Header * headerBuffer;
+    Item * sender;
     long numBytesToGet;
     char receiveID;
     DWORD dwCommEvent, dwBytesTransferred;
@@ -153,6 +154,19 @@ void PollingWorker::PollRS232()
                         newMsg->receiverID = (short)receiveID;
                         newMsg->msgNum = rand() % 100;
                         AddToQueue(newMsg);
+
+                        // Check if the senderID has already been created. If not, create one.
+                        if ((sender = BSTSearch(root, headerBuffer->bSenderAddr))== NULL)
+                        {
+                            Item * newItem = (Item*)(malloc (sizeof(Item)));
+                            int * count = (int*)(malloc (sizeof(int)));
+                            *count = 1;
+                            newItem->key = headerBuffer->bSenderAddr;
+                            newItem->data = count;
+                            root = BSTInsert(root,newItem);
+                        }
+                        else // If it has been created, increment
+                            *((int*)sender->data) = *((int*)sender->data) + 1;
 
                         emit labelEdit(QString("Number of Messages: %1").arg(numberOfMessages));
                     }

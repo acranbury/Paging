@@ -23,6 +23,7 @@ SOURCES += main.cpp \
     huffman.c \
     bst.c
 
+
 HEADERS  += senderwindow.h \
     receiverwindow.h \
     playback.h \
@@ -33,6 +34,7 @@ HEADERS  += senderwindow.h \
     checksum.h \
     huffman.h \
     bst.h
+
 
 FORMS    += senderwindow.ui \
     receiverwindow.ui

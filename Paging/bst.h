@@ -23,7 +23,8 @@ struct TreeNode{
 
 typedef struct TreeNode TreeNode;
 
-TreeNode * root;
+extern TreeNode * root;
+
 
 void BSTPrint(TreeNode *tree);
 void GetMessageFromFile (char *buffer, int iLen);
