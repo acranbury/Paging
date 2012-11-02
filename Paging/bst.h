@@ -25,6 +25,7 @@ typedef struct TreeNode TreeNode;
 
 extern TreeNode * root;
 
+
 void BSTPrint(TreeNode *tree);
 void GetMessageFromFile (char *buffer, int iLen);
 TreeNode *CreateBST(Item *item, TreeNode * left, TreeNode * right);
@@ -35,4 +36,3 @@ int CountBSTNodes(TreeNode * tree);
 int HeightBST(TreeNode * tree);
 
 #endif // BST_H
-

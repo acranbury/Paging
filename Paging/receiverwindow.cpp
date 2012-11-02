@@ -31,14 +31,15 @@ ReceiverWindow::ReceiverWindow(QWidget *parent) :
     // open RS232 port
     OpenRS232Port();
     displayInbox = 0;
+    transmitErrorCount = 0;
     displayTree = 0;
-
-
+    iBigBuf = NULL;
 }
 
 // cleans up the receiver window
 ReceiverWindow::~ReceiverWindow()
 {
+    thread->terminate();
     poller->SetIsFinished(1);
     delete ui;
 
@@ -76,6 +77,9 @@ void ReceiverWindow::HandleTextChange(QString message)
 }
 void ReceiverWindow::HandleAudio(long audioSize, char* audio)
 {
+    // If we have previous audio message, free it.
+    if (iBigBuf)
+        free(iBigBuf);
     lBigBufSize = audioSize;
     iBigBuf = (short *)audio;
     QMessageBox::information(NULL,"Audio Broadcast Received", "You have a new audio message, press 'Audio Messages'");
@@ -104,6 +108,7 @@ void ReceiverWindow::DisplayPhonebook()
     {
         ui->phoneBookBtn->setText(QString("Phonebook"));
         displayTree = 0;
+        Traverse(head);
     }
     else
     {
@@ -115,11 +120,19 @@ void ReceiverWindow::DisplayPhonebook()
 
 void ReceiverWindow::BSTPrint(TreeNode * treeRoot)
 {
+    int numMessages; // Number of times a user sent a message to this receiver.
     if (treeRoot == NULL) return;		// reached leaf
     BSTPrint( treeRoot->pLeft );
-    ui->msgTxt->append(QString ("Key: %1\n").arg(QString::number(treeRoot->item->key)));
+    numMessages = *((int*)root->item->data);
+    ui->msgTxt->append(QString ("Key: %1 # of messages from this user:%2\n").arg(QString::number(treeRoot->item->key),QString::number(numMessages)));
     BSTPrint( treeRoot->pRight );
     return;
+}
+
+void ReceiverWindow::HandleTransmitError()
+{
+    transmitErrorCount++;
+    ui->errorLbl->setText(QString("Errors: %1").arg(QString::number(transmitErrorCount)));
 }
 
 // Traverse list and print messages in order.
@@ -152,11 +165,12 @@ void ReceiverWindow::Archive()
 // plays back the audio buffer stored in iBigBuf
 void ReceiverWindow::Playback()
 {
+    InitializePlayback();
     //this->SetMsgText(QString("Playing broadcast..."));
     PlayBuffer( iBigBuf, lBigBufSize );
     //this->SetMsgText(QString("%1\nDone.").arg(this->GetMsgText()));
     ClosePlayback();
-    free(iBigBuf);
+
 }
 
 // get the baud rate from the combo box
@@ -188,6 +202,7 @@ void ReceiverWindow::UpdateQueueWindow()
 // restarts the polling thread if need be
 void ReceiverWindow::Refresh()
 {
+    thread->terminate();
     if(poller->GetBaudRate() != this->GetBaudRate())
         poller->SetBaudRate(this->GetBaudRate());
     if(!thread->isRunning())

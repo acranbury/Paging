@@ -1,6 +1,7 @@
 #include "checksum.h"
 
 // calculate the Fletcher's checksum of a buffer
+
 short CalculateChecksum(char *buffer, long bytes)
 {
     short sum1 = 0xff;
@@ -8,7 +9,7 @@ short CalculateChecksum(char *buffer, long bytes)
 
     while(bytes)
     {
-        int tlen = bytes > 20 ? 20 : bytes;
+        long tlen = bytes > 20 ? 20 : bytes;
         bytes -= tlen;
         do
         {

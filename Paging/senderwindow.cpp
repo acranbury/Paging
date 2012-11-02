@@ -114,24 +114,28 @@ void SenderWindow::SendText()
     // get the number of characters in the array
     numChars = (long)this->GetMsgText().length() + 1;
 
-    // If huffman encoding has been selected, encode it.
-    if (!(QString::compare("huffman", ui->compressCmb->itemText(ui->compressCmb->currentIndex()), Qt::CaseInsensitive)))
-    {
-        datasize = Huffman_Compress((unsigned char*)originalText, (unsigned char*)textBuf, numChars);
-        textBuf[datasize] = NULL;
-    }
 
     if (ui->headerChk->isChecked()){
 
         Header *msgHeader = (Header *)malloc(sizeof(Header));
+        msgHeader->bVersion = 0;
         if (msgHeader == NULL)
         {
             QMessageBox::information(NULL, "Error!", "Malloc has failed.");
         }
+        // If huffman encoding has been selected, encode it.
+        if (!(QString::compare("huffman", ui->compressCmb->itemText(ui->compressCmb->currentIndex()), Qt::CaseInsensitive)))
+        {
+            datasize = Huffman_Compress((unsigned char*)originalText, (unsigned char*)textBuf, numChars);
+            textBuf[datasize] = NULL;
+            msgHeader->bVersion = 0xFF;
+            numChars = datasize;
+        }
+
         // populate header
         msgHeader->lSignature = 0xDEADBEEF;
-        msgHeader->lReceiverAddr = 0xFFFFFFFF;
-        msgHeader->bVersion = 0xFF;
+        for(int i = 0; i < 3; i++)
+            msgHeader->lReceiverAddr[i] = 0xFF;        
         msgHeader->lDataLength = datasize;
         msgHeader->lDataUncompressed = numChars;
         msgHeader->bSenderAddr = DEFSENDER; //For now, should change this to variable/ link with button
@@ -154,9 +158,8 @@ void SenderWindow::SendVoice()
     char *voiceBuf;
     DWORD headerSize;
     headerSize = HEADERSIZE;
-    int datasize;
-
-    voiceBuf = (char*)malloc (sizeof(char)*lBigBufSize);
+    int datasize = lBigBufSize;
+      voiceBuf = (char*)malloc (sizeof(char)*lBigBufSize);
 
     if (voiceBuf == NULL)
     {
@@ -165,12 +168,6 @@ void SenderWindow::SendVoice()
 
     SetUpDCB(this->GetBaudRate());
 
-    // If huffman encoding has been selected, encode it.
-    if (!(QString::compare("huffman", ui->compressCmb->itemText(ui->compressCmb->currentIndex()), Qt::CaseInsensitive)))
-    {
-        datasize = Huffman_Compress((unsigned char*)iBigBuf, (unsigned char*)voiceBuf, lBigBufSize);
-        voiceBuf[datasize] = NULL;
-    }
 
 
 
@@ -179,15 +176,24 @@ void SenderWindow::SendVoice()
     {
         QMessageBox::information(NULL, "Error!", "Malloc has failed.");
     }
+
+    // If huffman encoding has been selected, encode it.
+    if (!(QString::compare("huffman", ui->compressCmb->itemText(ui->compressCmb->currentIndex()), Qt::CaseInsensitive)))
+    {
+        datasize = Huffman_Compress((unsigned char*)iBigBuf, (unsigned char*)voiceBuf, lBigBufSize);
+        voiceBuf[datasize] = NULL;
+    }
     // populate header
     msgHeader->lSignature = 0xDEADBEEF;
-    msgHeader->lReceiverAddr = 0xFFFFFFFF;
+    for(int i = 0; i < 3; i++)
+        msgHeader->lReceiverAddr[i] = 0xFF;
     msgHeader->bVersion = 0xFF;
     msgHeader->lDataLength = datasize;
     msgHeader->lDataUncompressed = lBigBufSize;
     msgHeader->bSenderAddr = DEFSENDER; //For now, should change this to variable/ link with button
     msgHeader->lPattern = 0xAA55AA55;
     msgHeader->bDataType = 0xFF;
+    msgHeader->sChecksum = CalculateChecksum(voiceBuf, datasize);
 
 
     if(!WriteToRS232((BYTE *)msgHeader, &headerSize)){
@@ -195,9 +201,13 @@ void SenderWindow::SendVoice()
         return;
     }
 
-    if(!WriteToRS232((BYTE *)voiceBuf, (DWORD *)&lBigBufSize))
+    if(!WriteToRS232((BYTE *)voiceBuf, (DWORD *)&datasize))
+    {
         QMessageBox::information(NULL, "Error!", "Write voice to RS232 failed");
+    }
 }
+
+// Sends messages automatically according to the poisson distribution
 void SenderWindow::SendPoisson()
 {
     float lambda = LAMBDA;
@@ -232,7 +242,8 @@ void SenderWindow::SendPoisson()
                 }
                 // populate header
                 msgHeader->lSignature = 0xDEADBEEF;
-                msgHeader->lReceiverAddr = 0xFF;
+                for(int i = 0; i < 3; i++)
+                    msgHeader->lReceiverAddr[i] = 0xFF;
                 msgHeader->bVersion = 0;
                 msgHeader->lDataLength = numChars;
                 msgHeader->bSenderAddr = DEFSENDER; //For now, should change this to variable/ link with button

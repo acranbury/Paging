@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     {
         QMessageBox::information(NULL, "Defaulting...", "Defaulting to Sender");
         r.show();
-        //r.StartPoller();
+        r.StartPoller();
     }
     /*if(r.isVisible())
     {
