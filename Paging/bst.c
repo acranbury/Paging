@@ -47,18 +47,7 @@ TreeNode *BSTInsert(TreeNode * tree, Item * newItem) {
 	return tree;
 }
 
-
-
-
-
 /*TreeNode *BSTBalance(TreeNode *tree){
-
-
-	use height to find the height
-
-	iterate to the middle rung, set which ever one youre at to the head of the new tree
-	insert each item from the old tree into the new tree and free it from the old tree
-
 
 }*/
 // counts the nodes in a BST

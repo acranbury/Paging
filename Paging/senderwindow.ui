@@ -33,6 +33,11 @@
       <height>22</height>
      </rect>
     </property>
+    <item>
+     <property name="text">
+      <string>69</string>
+     </property>
+    </item>
    </widget>
    <widget class="QComboBox" name="receiverCmb">
     <property name="geometry">
@@ -297,7 +302,7 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>280</y>
+      <y>290</y>
       <width>70</width>
       <height>17</height>
      </rect>
@@ -347,7 +352,7 @@
      </property>
     </item>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="compressLbl">
     <property name="geometry">
      <rect>
       <x>280</x>
@@ -358,6 +363,19 @@
     </property>
     <property name="text">
      <string>Compression</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checksumChk">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>270</y>
+      <width>101</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Checksum Error</string>
     </property>
    </widget>
   </widget>
