@@ -129,7 +129,7 @@ void PollingWorker::PollRS232()
                   //  emit error(QString(readBuf), (int)(dwBytesTransferred));
 
                     // calculate the checksum and compare
-                    if(headerBuffer->sChecksum == CalculateChecksum((short*)readBuf, headerBuffer->lDataLength))
+                    if(headerBuffer->sChecksum == CalculateChecksum(readBuf, headerBuffer->lDataLength))
                     {
                         emit transmitError();
                     }
