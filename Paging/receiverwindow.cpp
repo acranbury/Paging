@@ -95,7 +95,7 @@ void ReceiverWindow::StartPoller()
 }*/
 
 // appends text to the text window
-void ReceiverWindow::HandleTextChange(QString message)
+void ReceiverWindow::HandleTextChange(char* message)
 {
     ui->msgTxt->append(message);
 }
@@ -106,9 +106,9 @@ void ReceiverWindow::HandleAudio(long audioSize, char* audio, short samplesPerSe
     // If we have previous audio message, free it.
     if (iBigBuf)
         free(iBigBuf);
-    lBigBufSize = audioSize;
-    iBigBuf = (short *)audio;
-    g_nSamplesPerSec = samplesPerSec;
+    lBigBufSize = audioSize/2;
+    CharToShort(audio, audioSize, iBigBuf, lBigBufSize);
+    g_nSamplesPerSec = (int)samplesPerSec;
     QMessageBox::information(NULL,"Audio Broadcast Received", "You have a new audio message, press 'Audio Messages'");
 }
 

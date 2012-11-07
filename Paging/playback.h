@@ -53,5 +53,7 @@ void ClosePlayback(void);
 int WaitForNotePlayback(int iNote);
 int PlayBuffer( short *piBuf, long lSamples );
 void CloseRecording(void);
+void CharToShort(char * charArray, int charSize, short * shortArray, int shortSize);
+void ShortToChar(char * charArray, int charSize, short * shortArray, int shortSize);
 
 #endif

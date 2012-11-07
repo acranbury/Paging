@@ -202,7 +202,7 @@ void PollingWorker::PollRS232()
                         emit error(QString("Error getting the raw data."), (int)GetLastError());
 
                     if(dwBytesTransferred != 0)
-                        emit messageEdit(QString(rawByte));
+                        emit messageEdit(rawByte);
 
                 }while(dwBytesTransferred != 0);
             }

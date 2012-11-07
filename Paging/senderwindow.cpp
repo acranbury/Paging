@@ -217,15 +217,30 @@ void SenderWindow::SendVoice()
         QMessageBox::information(NULL, "Error!", "Malloccing msgHeader has failed.");
     }
 
-    // set up the version first, so if there's compression it's overridden
-    msgHeader->bVersion = 0;
+
+
+    // make a new buffer to put the char audio in
+    char * charBuf = (char *)calloc(datasize, sizeof(char));
+    if (charBuf == NULL)
+    {
+        QMessageBox::information(NULL, "Error!", "Malloccing charBuf has failed.");
+    }
+
+    // convert voice buffer from short to char array
+    ShortToChar(charBuf, datasize, iBigBuf, lBigBufSize);
 
     // If huffman encoding has been selected, encode it.
     if (!(QString::compare("huffman", ui->compressCmb->itemText(ui->compressCmb->currentIndex()), Qt::CaseInsensitive)))
     {
-        datasize = Huffman_Compress((unsigned char*)iBigBuf, (unsigned char*)voiceBuf, datasize);
+        datasize = Huffman_Compress((unsigned char*)charBuf, (unsigned char*)voiceBuf, datasize);
         //voiceBuf[datasize] = NULL;
         msgHeader->bVersion = 0xFF;
+    }else
+    {
+        // convert voice buffer from short to char array
+        ShortToChar(voiceBuf, datasize, iBigBuf, lBigBufSize);
+        // set up the version first, so if there's compression it's overridden
+        msgHeader->bVersion = 0;
     }
 
     // populate header
@@ -240,7 +255,7 @@ void SenderWindow::SendVoice()
     msgHeader->bSenderAddr = ui->senderCmb->currentText().toInt();
     msgHeader->lPattern = 0xAA55AA55;
     msgHeader->bDataType = 0xFF;
-    msgHeader->sSamplesPerSec = g_nSamplesPerSec;
+    msgHeader->sSamplesPerSec = ui->sampleCmb->currentText().toShort();
     // if the checksum error box is checked, send an error in the checksum for testing
     msgHeader->sChecksum = ui->checksumChk->isChecked() ? CalculateChecksum(voiceBuf, datasize) + 1 : CalculateChecksum(voiceBuf, datasize);
 

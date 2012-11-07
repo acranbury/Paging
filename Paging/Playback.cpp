@@ -237,6 +237,33 @@ void CloseRecording(void)
 	return;
 }
 
+void CharToShort(char * charArray, int charSize, short * shortArray, int shortSize)
+{
+    // check the input
+    if(charSize == 0) return;
+    if(shortSize != (charSize / 2)) return;
+
+    // convert each pair of bytes into a 16 bit short
+    for(int i = 0; i < shortSize; i++)
+    {
+        shortArray[i] = (short)((charArray[i<<1] << 8) + byteArray[(i<<1)+1]);
+    }
+}
+
+void ShortToChar(char * charArray, int charSize, short * shortArray, int shortSize)
+{
+    // check the input
+    if(charSize == 0) return;
+    if(shortSize != (charSize / 2)) return;
+
+    // convert each pair of bytes into a 16 bit short
+    for(int i = 0; i < shortSize; i++)
+    {
+        charArray[i<<1] = (char)0xff00 & shortArray[i];
+        charArray[(i<<1)+1] = (char)0x00ff & shortArray[i];
+    }
+}
+
 
 #ifdef TESTING  // a testing mainline
 

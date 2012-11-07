@@ -4,7 +4,6 @@
   Github: www.github.com/acranbury/Paging.git
 */
 
-
 #include <QtGui/QApplication>
 #include <QMessageBox>
 #include <cctype>
@@ -22,13 +21,11 @@ int main(int argc, char *argv[])
 
     if(argc > 1)
     {
+        // get command line arguments
         if(toupper(*argv[1]) == 'S')
             s.show();
         if(toupper(*argv[1]) == 'R')
-        {
             r.show();
-
-        }
     }
     else
     {
