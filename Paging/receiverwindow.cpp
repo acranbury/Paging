@@ -59,7 +59,7 @@ void ReceiverWindow::StartPoller()
     poller->moveToThread(thread);
     connect(poller, SIGNAL(error(QString, int)), this, SLOT(HandleErrors(QString, int)));
     connect(poller, SIGNAL(labelEdit(QString)), this, SLOT(HandleLabelChange(QString)));
-    connect(poller, SIGNAL(messageEdit(QString)), this, SLOT(HandleTextChange(QString)));
+    connect(poller, SIGNAL(messageEdit(char)), this, SLOT(HandleTextChange(char)));
     connect(poller, SIGNAL(audioReceived(long,char*)), this, SLOT(HandleAudio(long, char*)));
     connect(thread, SIGNAL(started()), poller, SLOT(PollRS232()));
     connect(poller, SIGNAL(finished()), thread, SLOT(quit()));
@@ -95,9 +95,9 @@ void ReceiverWindow::StartPoller()
 }*/
 
 // appends text to the text window
-void ReceiverWindow::HandleTextChange(QString message)
+void ReceiverWindow::HandleTextChange(char chr)
 {
-    ui->msgTxt->append(message);
+    ui->msgTxt->append(QString ("%1").arg((ushort)chr, 0, 16));
 }
 
 // fills the audio buffer and displays a message
@@ -108,7 +108,7 @@ void ReceiverWindow::HandleAudio(long audioSize, char* audio, short samplesPerSe
         free(iBigBuf);
     lBigBufSize = audioSize;
     iBigBuf = (short *)audio;
-    g_nSamplesPerSec = samplesPerSec;
+    g_nSamplesPerSec = (int)samplesPerSec;
     QMessageBox::information(NULL,"Audio Broadcast Received", "You have a new audio message, press 'Audio Messages'");
 }
 

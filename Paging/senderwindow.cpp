@@ -202,7 +202,7 @@ void SenderWindow::SendVoice()
     int datasize = 2 * lBigBufSize;
 
     // +320 bytes for the huffman tree
-    voiceBuf = (char*)calloc ((datasize + 320), sizeof(char));
+    voiceBuf = (char*)calloc ((datasize + 320), sizeof(short));
     if (voiceBuf == NULL)
     {
         QMessageBox::information(NULL, "Error!", "Malloccing voiceBuf has failed.");

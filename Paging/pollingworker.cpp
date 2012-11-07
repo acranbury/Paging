@@ -195,14 +195,14 @@ void PollingWorker::PollRS232()
                 // in raw mode, just grab chunks of bytes as they come
                 do
                 {
-                    if(!(rawByte = (char *)calloc(512, sizeof(char))))
+                    if(!(rawByte = (char *)calloc(1, sizeof(char))))
                         emit error(QString("Error malloccing rawByte."), (int)GetLastError());
 
-                    if(!ReadFile(hComm, rawByte, 512, &dwBytesTransferred, 0))
+                    if(!ReadFile(hComm, rawByte, 1, &dwBytesTransferred, 0))
                         emit error(QString("Error getting the raw data."), (int)GetLastError());
 
                     if(dwBytesTransferred != 0)
-                        emit messageEdit(QString(rawByte));
+                        emit messageEdit(*rawByte);
 
                 }while(dwBytesTransferred != 0);
             }
