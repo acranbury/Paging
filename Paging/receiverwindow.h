@@ -58,6 +58,7 @@ private:
     char GetHammingDistance(char x, char y);
     int displayTree;
     void PopulatePhonebook();
+    void SavePhonebook();
 
 };
 

@@ -161,6 +161,11 @@ void SenderWindow::SendText()
         // If huffman encoding has been selected, encode it.
         if (!(QString::compare("huffman", ui->compressCmb->itemText(ui->compressCmb->currentIndex()), Qt::CaseInsensitive)))
         {
+            textBuf = (char *)calloc(numChars, sizeof(char));
+            if(textBuf == NULL)
+            {
+                QMessageBox::information(NULL, "Error", "Error malloccing textBuf");
+            }
             datasize = Huffman_Compress((unsigned char*)inBuf, (unsigned char*)textBuf, numChars);
             textBuf[datasize] = NULL;
             msgHeader->bVersion = 0xFF;
@@ -169,7 +174,7 @@ void SenderWindow::SendText()
         // populate header
         msgHeader->lSignature = 0xDEADBEEF;
         for(int i = 0; i < 3; i++)   
-        msgHeader->lReceiverAddr[i] = ui->receiverCmb->currentText().toInt();
+            msgHeader->lReceiverAddr[i] = ui->receiverCmb->currentText().toInt();
         msgHeader->lDataLength = datasize;
         msgHeader->lDataUncompressed = numChars;
         msgHeader->bSenderAddr = ui->senderCmb->currentText().toInt();
@@ -189,6 +194,11 @@ void SenderWindow::SendText()
     // send the text buffer
     if(!WriteToRS232((BYTE *)textBuf, (DWORD *)&datasize))
         QMessageBox::information(NULL, "Error!", "Write data to RS232 failed");
+    if (!(QString::compare("huffman", ui->compressCmb->itemText(ui->compressCmb->currentIndex()), Qt::CaseInsensitive)))
+    {
+        free(textBuf);
+    }
+
 }
 
 // send voice via RS232
@@ -217,28 +227,15 @@ void SenderWindow::SendVoice()
         QMessageBox::information(NULL, "Error!", "Malloccing msgHeader has failed.");
     }
 
-
-
-    // make a new buffer to put the char audio in
-    char * charBuf = (char *)calloc(datasize, sizeof(char));
-    if (charBuf == NULL)
-    {
-        QMessageBox::information(NULL, "Error!", "Malloccing charBuf has failed.");
-    }
-
-    // convert voice buffer from short to char array
-    ShortToChar(charBuf, datasize, iBigBuf, lBigBufSize);
-
     // If huffman encoding has been selected, encode it.
     if (!(QString::compare("huffman", ui->compressCmb->itemText(ui->compressCmb->currentIndex()), Qt::CaseInsensitive)))
     {
-        datasize = Huffman_Compress((unsigned char*)charBuf, (unsigned char*)voiceBuf, datasize);
+        datasize = Huffman_Compress((unsigned char*)iBigBuf, (unsigned char*)voiceBuf, datasize);
         //voiceBuf[datasize] = NULL;
         msgHeader->bVersion = 0xFF;
     }else
     {
-        // convert voice buffer from short to char array
-        ShortToChar(voiceBuf, datasize, iBigBuf, lBigBufSize);
+        voiceBuf = (char *)iBigBuf;
         // set up the version first, so if there's compression it's overridden
         msgHeader->bVersion = 0;
     }

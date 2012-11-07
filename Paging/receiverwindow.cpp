@@ -33,11 +33,15 @@ ReceiverWindow::ReceiverWindow(QWidget *parent) :
     transmitErrorCount = 0;
     displayTree = 0;
     iBigBuf = NULL;
+
+    this->PopulatePhonebook();
 }
 
 // cleans up the receiver window
 ReceiverWindow::~ReceiverWindow()
 {
+    this->SavePhonebook();
+
     //thread->terminate();
     poller->SetIsFinished(1);
 
@@ -69,30 +73,57 @@ void ReceiverWindow::StartPoller()
 }
 
 // grabs the saved phonebook
-/*void ReceiverWindow::PopulatePhonebook()
+void ReceiverWindow::PopulatePhonebook()
 {
     FILE *fp;
     char currC;
 
     // open the senders file and check if we've opened it
-    fp = fopen(FORTUNETXT, READMODE);
+    fp = fopen(PHONEBOOK, READMODE);
     if(fp == NULL){
         QMessageBox::information(NULL, "Info", "ERROR: Could not open sender file.");
         return;
     }
 
-    do
+    while((currC = fgetc(fp)) != EOF)
     {
-        currC = fgetc(fp);
-    }while(currC != EOF);
+        Item * newItem = (Item*)(malloc (sizeof(Item)));
+        int * count = (int*)(malloc (sizeof(int)));
+        *count = fgetc(fp);
+        newItem->key = headerBuffer->bSenderAddr;
+        newItem->data = count;
+        root = BSTInsert(root,newItem);
+    }
+    fclose(fp);
+}
 
-    Item * newItem = (Item*)(malloc (sizeof(Item)));
-    int * count = (int*)(malloc (sizeof(int)));
-    *count = 1;
-    newItem->key = headerBuffer->bSenderAddr;
-    newItem->data = count;
-    root = BSTInsert(root,newItem);
-}*/
+void ReceiverWindow::SavePhonebook()
+{
+    FILE *fp;
+
+    // open the senders file and check if we've opened it
+    fp = fopen(PHONEBOOK, WRITEMODE);
+    if(fp == NULL){
+        QMessageBox::information(NULL, "Info", "ERROR: Could not open sender file.");
+        return;
+    }
+
+    BSTSave(root, fp);
+    fclose(fp);
+}
+
+// recursively writes a bst to a file
+void ReceiverWindow::BSTSave(TreeNode * treeRoot, FILE * fp)
+{
+    int numMessages; // Number of times a user sent a message to this receiver.
+    if (treeRoot == NULL) return;		// reached leaf
+    BSTSave( treeRoot->pLeft, fp );
+    numMessages = *((int*)root->item->data);
+    fputc(treeRoot->item->key, fp);
+    fputc(numMessages, fp);
+    BSTSave( treeRoot->pRight, fp );
+    return;
+}
 
 // appends text to the text window
 void ReceiverWindow::HandleTextChange(char chr)
@@ -109,9 +140,7 @@ void ReceiverWindow::HandleAudio(long audioSize, char* audio, short samplesPerSe
     if (iBigBuf)
         free(iBigBuf);
     lBigBufSize = audioSize/2;
-    //iBigBuf = (short*)calloc (lBigBufSize,sizeof(short));
-    //CharToShort(audio, audioSize, iBigBuf, lBigBufSize);
-    iBigBuf = (short*) audio;
+    iBigBuf = (short *)audio;
     g_nSamplesPerSec = (int)samplesPerSec;
     QMessageBox::information(NULL,"Audio Broadcast Received", "You have a new audio message, press 'Audio Messages'");
 }
