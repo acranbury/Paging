@@ -246,7 +246,7 @@ void CharToShort(char * charArray, int charSize, short * shortArray, int shortSi
     // convert each pair of bytes into a 16 bit short
     for(int i = 0; i < shortSize; i++)
     {
-        shortArray[i] = (short)((charArray[i<<1] << 8) + byteArray[(i<<1)+1]);
+        shortArray[i] = (short)((charArray[i<<1] << 8) + charArray[(i<<1)+1]);
     }
 }
 
