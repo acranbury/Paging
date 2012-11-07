@@ -13,8 +13,7 @@ extern "C"
 #include "bst.h"
 }
 
-
-
+// constructor to connect all buttons and open the rs 232 port
 ReceiverWindow::ReceiverWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ReceiverWindow)
@@ -39,21 +38,20 @@ ReceiverWindow::ReceiverWindow(QWidget *parent) :
 // cleans up the receiver window
 ReceiverWindow::~ReceiverWindow()
 {
-    thread->terminate();
+    //thread->terminate();
     poller->SetIsFinished(1);
-    delete ui;
 
+    // wait for the thread to finish, then free the poller and the thread
+    while(!thread->isFinished()){}
+    delete poller;
+    delete thread;
 
     // close rs232 port
     CloseRS232Port();
-
-    if (thread->isFinished()){
-        delete poller;
-        delete thread;
-    }
+    delete ui;
 }
 
-
+// start the rs232 poller thread
 void ReceiverWindow::StartPoller()
 {
     thread = new QThread;
@@ -70,21 +68,51 @@ void ReceiverWindow::StartPoller()
     thread->start();
 }
 
+// grabs the saved phonebook
+/*void ReceiverWindow::PopulatePhonebook()
+{
+    FILE *fp;
+    char currC;
+
+    // open the senders file and check if we've opened it
+    fp = fopen(FORTUNETXT, READMODE);
+    if(fp == NULL){
+        QMessageBox::information(NULL, "Info", "ERROR: Could not open sender file.");
+        return;
+    }
+
+    do
+    {
+        currC = fgetc(fp);
+    }while(currC != EOF);
+
+    Item * newItem = (Item*)(malloc (sizeof(Item)));
+    int * count = (int*)(malloc (sizeof(int)));
+    *count = 1;
+    newItem->key = headerBuffer->bSenderAddr;
+    newItem->data = count;
+    root = BSTInsert(root,newItem);
+}*/
+
+// appends text to the text window
 void ReceiverWindow::HandleTextChange(QString message)
 {
     ui->msgTxt->append(message);
-    //QMessageBox::information(NULL, "Info", message);
 }
-void ReceiverWindow::HandleAudio(long audioSize, char* audio)
+
+// fills the audio buffer and displays a message
+void ReceiverWindow::HandleAudio(long audioSize, char* audio, short samplesPerSec)
 {
     // If we have previous audio message, free it.
     if (iBigBuf)
         free(iBigBuf);
     lBigBufSize = audioSize;
     iBigBuf = (short *)audio;
+    g_nSamplesPerSec = samplesPerSec;
     QMessageBox::information(NULL,"Audio Broadcast Received", "You have a new audio message, press 'Audio Messages'");
 }
 
+// updates number of messages label
 void ReceiverWindow::HandleLabelChange(QString message)
 {
     // update number of messages
@@ -101,6 +129,7 @@ void ReceiverWindow::HandleErrors(QString error, int code)
     QMessageBox::information(NULL, "Error", QString("Message: %1 Code: %2").arg(error, QString::number(code)));
 }
 
+// displays the sender phonebook to the screen or reverts to the inbox
 void ReceiverWindow::DisplayPhonebook()
 {
     ui->msgTxt->clear();
@@ -118,6 +147,7 @@ void ReceiverWindow::DisplayPhonebook()
     }
 }
 
+// prints a binary search tree to the text window
 void ReceiverWindow::BSTPrint(TreeNode * treeRoot)
 {
     int numMessages; // Number of times a user sent a message to this receiver.
@@ -129,6 +159,7 @@ void ReceiverWindow::BSTPrint(TreeNode * treeRoot)
     return;
 }
 
+// updates the error count and displays it on the error label
 void ReceiverWindow::HandleTransmitError()
 {
     transmitErrorCount++;
@@ -141,9 +172,9 @@ void ReceiverWindow::Traverse(Msg *h) {
     this->PrintTenChars(h);
     Traverse(h->next);
 }
-// Visit function, simply prints the message at that node.
+// prints the first 10 characters of a message
 void ReceiverWindow::PrintTenChars (Msg * msg){
-    int i;
+    //int i;
     ui->msgTxt->append(QString("%1").arg(QString::number(msg->msgNum)));
 
     ui->msgTxt->append(QString(msg->txt));
