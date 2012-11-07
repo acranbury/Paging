@@ -5,7 +5,7 @@ extern "C"
 #include "bst.h"
 }
 
-
+// constructor with current baud rate and checkbox pointer to tell if it should be doing raw or not
 PollingWorker::PollingWorker(int ibaudRate, QCheckBox * rawText)
 {
     baudRate = ibaudRate;
@@ -17,16 +17,19 @@ PollingWorker::~PollingWorker()
 
 }
 
+// set the current baud rate
 void PollingWorker::SetBaudRate(int ibaudRate)
 {
     baudRate = ibaudRate;
 }
 
+// get the current baud rate
 int PollingWorker::GetBaudRate()
 {
     return baudRate;
 }
 
+// set whether the loop should finish
 void PollingWorker::SetIsFinished(int finish)
 {
     isFinish = finish;
@@ -133,14 +136,10 @@ void PollingWorker::PollRS232()
                     unCompressed = readBuf;
 
                     // calculate the checksum and compare
-                    if(headerBuffer->sChecksum == CalculateChecksum(readBuf, headerBuffer->lDataLength))
-                    {                        
-                        emit error (QString ("Checksum reports no errors"),0);
-                    }
-                    else
+                    if(headerBuffer->sChecksum != CalculateChecksum(readBuf, headerBuffer->lDataLength))
                     {
                         emit transmitError();
-                        emit error (QString ("Checksum reports errors"),0);
+                        //emit error (QString ("Checksum reports errors"),0);
                     }
 
                     if (headerBuffer->bVersion == 0xFF)
@@ -151,6 +150,8 @@ void PollingWorker::PollRS232()
                         // For testing purposes.
                         //emit error (QString("We have a buffer."),0);
                     }
+
+                    receiveID = GetReceiverId(headerBuffer->lReceiverAddr);
 
                     if (headerBuffer->bDataType == 0)
                     { // If the data is text.
@@ -182,13 +183,16 @@ void PollingWorker::PollRS232()
                     }
                     else
                     {
-                        emit error (QString ("We have audio!"),0);
-                        emit audioReceived(headerBuffer->lDataUncompressed, unCompressed);
+                        // we have audio, emit the data, the length of the data, and the sample rate
+                        emit audioReceived(headerBuffer->lDataUncompressed,
+                                           unCompressed,
+                                           headerBuffer->sSamplesPerSec);
                     }
                 }
             }
             else
             {
+                // in raw mode, just grab chunks of bytes as they come
                 do
                 {
                     if(!(rawByte = (char *)calloc(512, sizeof(char))))
@@ -204,4 +208,5 @@ void PollingWorker::PollRS232()
             }
         }
     }
+    emit finished();
 }

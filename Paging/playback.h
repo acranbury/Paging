@@ -23,7 +23,7 @@
 
 #define MIN_BUFSIZE			1000
 //#define	NFREQUENCIES (sizeof(fFrequencies)/sizeof(float))
-#define RECORD_TIME		6		// seconds
+#define RECORD_TIME		10		// seconds
 #define SAMPLES_SEC		8000	// samples per second
 #define BITSSAMPLE      16
 #define NUMHEADERS      1

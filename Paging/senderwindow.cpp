@@ -63,7 +63,18 @@ void SenderWindow::SetMsgText(QString &text)
     ui->msgTxt->setText(text);
 }
 
-// adds a sender id to the combo box
+// adds a receiver id to the receiver id combo box
+void SenderWindow::AddReceiver()
+{
+    // pop up a dialog to add a sender id
+    bool ok;
+    QString receiver = QInputDialog::getText(NULL,"Add Receiver", "Enter new Receiver Id: ", QLineEdit::Normal, " ", &ok );
+
+    if(ok && !receiver.isEmpty())
+        ui->senderCmb->addItem(receiver);
+}
+
+// adds a sender id to the sender id combo box
 void SenderWindow::AddSender()
 {
     // pop up a dialog to add a sender id
@@ -77,35 +88,38 @@ void SenderWindow::AddSender()
 // record the audio buffer
 void SenderWindow::Record()
 {
+    // get the sample rate from the ui
     g_nSamplesPerSec = ui->sampleCmb->currentText().toInt();
-    iBigBuf = (short *)malloc(sizeof(short) * g_nSamplesPerSec * RECORD_TIME);
+
+    // compute the buffer size
     lBigBufSize = g_nSamplesPerSec * RECORD_TIME;	// in samples
+
+    // fill out the audio buffer
+    iBigBuf = (short *)malloc(sizeof(short) * lBigBufSize);
     if (iBigBuf == NULL)
     {
         QMessageBox::information(NULL, "Error!", "Malloc has failed.");
     }
 
+    // set up the recording stuff
     InitializePlayback();
 
-    ui->msgTxt->clear();
     // Record the special buffer
     InitializeRecording(iBigBuf, lBigBufSize);
-    this->SetMsgText(QString("Recording....."));
+    ui->msgTxt->append(QString("Recording....."));
     RecordBuffer(iBigBuf, lBigBufSize );
-    this->SetMsgText(QString("%1\nDone.").arg(this->GetMsgText()));
+    ui->msgTxt->append(QString("\nDone."));
     CloseRecording();
 }
 
 // playback the audio buffer
 void SenderWindow::Playback()
 {
-    ui->msgTxt->clear();
-    this->SetMsgText(QString("Playing broadcast..."));
+    ui->msgTxt->append(QString("Playing broadcast..."));
     InitializePlayback();
     PlayBuffer( iBigBuf, lBigBufSize );
-    this->SetMsgText(QString("%1\nDone.").arg(this->GetMsgText()));
+    ui->msgTxt->append(QString("\nDone."));
     ClosePlayback();
-    //free(iBigBuf);
 }
 
 // send text via RS232
@@ -118,6 +132,7 @@ void SenderWindow::SendText()
     headerSize = HEADERSIZE;
     int datasize;
 
+    // set up the dcb with the baud rate from the ui
     SetUpDCB(this->GetBaudRate());
 
     // get the text from the textbox, put it into char array
@@ -130,18 +145,18 @@ void SenderWindow::SendText()
     numChars = (long)this->GetMsgText().length() + 1;
     datasize = numChars;
 
-
-
+    // if headers should be sent, set them up
     if (ui->headerChk->isChecked()){
 
-
-
         Header *msgHeader = (Header *)malloc(sizeof(Header));
-        msgHeader->bVersion = 0;
         if (msgHeader == NULL)
         {
             QMessageBox::information(NULL, "Error!", "Malloc of msgHeader has failed.");
+            return;
         }
+
+        // set up the version first, so if there's compression it's overridden
+        msgHeader->bVersion = 0;
 
         // If huffman encoding has been selected, encode it.
         if (!(QString::compare("huffman", ui->compressCmb->itemText(ui->compressCmb->currentIndex()), Qt::CaseInsensitive)))
@@ -154,7 +169,7 @@ void SenderWindow::SendText()
         // populate header
         msgHeader->lSignature = 0xDEADBEEF;
         for(int i = 0; i < 3; i++)   
- 		msgHeader->lReceiverAddr[i] = 0xFF;
+        msgHeader->lReceiverAddr[i] = ui->receiverCmb->currentText().toInt();
         msgHeader->lDataLength = datasize;
         msgHeader->lDataUncompressed = numChars;
         msgHeader->bSenderAddr = ui->senderCmb->currentText().toInt();
@@ -162,13 +177,16 @@ void SenderWindow::SendText()
         msgHeader->bDataType = 0;
         msgHeader->sChecksum = ui->checksumChk->isChecked() ? CalculateChecksum(textBuf, datasize) + 1 : CalculateChecksum(textBuf, datasize);
 
-
+        // send the header
         if(!WriteToRS232((BYTE *)msgHeader, &headerSize)){
             QMessageBox::information(NULL, "Error!", "Write header to RS232 failed");
             return;
         }
+        // free the header, as we no longer need it
         free(msgHeader);
     }
+
+    // send the text buffer
     if(!WriteToRS232((BYTE *)textBuf, (DWORD *)&datasize))
         QMessageBox::information(NULL, "Error!", "Write data to RS232 failed");
 }
@@ -179,13 +197,18 @@ void SenderWindow::SendVoice()
     char *voiceBuf;
     DWORD headerSize;
     headerSize = HEADERSIZE;
-    int datasize = lBigBufSize;
-    voiceBuf = (char*)calloc ((lBigBufSize + 320), sizeof(char));
+
+    // audio buffer size is in 16 bits, not 8, so multiply by 2
+    int datasize = 2 * lBigBufSize;
+
+    // +320 bytes for the huffman tree
+    voiceBuf = (char*)calloc ((datasize + 320), sizeof(char));
     if (voiceBuf == NULL)
     {
         QMessageBox::information(NULL, "Error!", "Malloccing voiceBuf has failed.");
     }
 
+    // set up the dcb with the baud rate from the ui
     SetUpDCB(this->GetBaudRate());
 
     Header *msgHeader = (Header *)malloc(sizeof(Header));
@@ -193,41 +216,47 @@ void SenderWindow::SendVoice()
     {
         QMessageBox::information(NULL, "Error!", "Malloccing msgHeader has failed.");
     }
+
+    // set up the version first, so if there's compression it's overridden
     msgHeader->bVersion = 0;
 
     // If huffman encoding has been selected, encode it.
     if (!(QString::compare("huffman", ui->compressCmb->itemText(ui->compressCmb->currentIndex()), Qt::CaseInsensitive)))
     {
-        datasize = Huffman_Compress((unsigned char*)iBigBuf, (unsigned char*)voiceBuf, lBigBufSize);
+        datasize = Huffman_Compress((unsigned char*)iBigBuf, (unsigned char*)voiceBuf, datasize);
         //voiceBuf[datasize] = NULL;
         msgHeader->bVersion = 0xFF;
     }
 
     // populate header
     msgHeader->lSignature = 0xDEADBEEF;
+
+    // use repetition to protect the receiver id
     for(int i = 0; i < 3; i++)
-        msgHeader->lReceiverAddr[i] = 0xFF;
+        msgHeader->lReceiverAddr[i] = ui->receiverCmb->currentText().toInt();
 
     msgHeader->lDataLength = datasize;
-    msgHeader->lDataUncompressed = lBigBufSize;
+    msgHeader->lDataUncompressed = (lBigBufSize * 2); // lBigBufSize is size of short buffer, not char
     msgHeader->bSenderAddr = ui->senderCmb->currentText().toInt();
     msgHeader->lPattern = 0xAA55AA55;
     msgHeader->bDataType = 0xFF;
+    msgHeader->sSamplesPerSec = g_nSamplesPerSec;
+    // if the checksum error box is checked, send an error in the checksum for testing
     msgHeader->sChecksum = ui->checksumChk->isChecked() ? CalculateChecksum(voiceBuf, datasize) + 1 : CalculateChecksum(voiceBuf, datasize);
 
-    QMessageBox::information(NULL, "Error!", QString("Checksum: %1").arg(QString::number(msgHeader->sChecksum)));
-
-
-
+    // send the header
     if(!WriteToRS232((BYTE *)msgHeader, &headerSize)){
         QMessageBox::information(NULL, "Error!", "Write header to RS232 failed");
         return;
     }
 
+    // send the audio buffer
     if(!WriteToRS232((BYTE *)voiceBuf, (DWORD *)&datasize))
     {
         QMessageBox::information(NULL, "Error!", "Write voice to RS232 failed");
     }
+
+    // free the header and the buffer, as we no longer need them
     free(msgHeader);
     free(voiceBuf);
 }
@@ -268,7 +297,7 @@ void SenderWindow::SendPoisson()
                 // populate header
                 msgHeader->lSignature = 0xDEADBEEF;
                 for(int i = 0; i < 3; i++)
-                    msgHeader->lReceiverAddr[i] = 0xFF;
+                    msgHeader->lReceiverAddr[i] = ui->receiverCmb->currentText().toInt();
                 msgHeader->bVersion = 0;
                 msgHeader->lDataLength = numChars;
                 msgHeader->bSenderAddr = ui->senderCmb->currentText().toInt();
@@ -282,6 +311,9 @@ void SenderWindow::SendPoisson()
                     QMessageBox::information(NULL, "Error!", "Write header to RS232 failed");
                     return;
                 }
+
+                // free the header, as we're done with it
+                free(msgHeader);
             }
             if(!WriteToRS232((BYTE *)buffer, (DWORD *)&numChars))
                 QMessageBox::information(NULL, "Error!", "Write data to RS232 failed");

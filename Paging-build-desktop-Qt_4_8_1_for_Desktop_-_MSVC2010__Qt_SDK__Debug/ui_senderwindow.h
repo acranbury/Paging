@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'senderwindow.ui'
 **
-** Created: Fri Nov 2 14:07:22 2012
+** Created: Mon Nov 5 09:56:45 2012
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -119,6 +119,7 @@ public:
         msgPriorityCmb->setGeometry(QRect(100, 150, 51, 22));
         testMenu = new QPushButton(centralWidget);
         testMenu->setObjectName(QString::fromUtf8("testMenu"));
+        testMenu->setEnabled(false);
         testMenu->setGeometry(QRect(100, 280, 75, 23));
         headerChk = new QCheckBox(centralWidget);
         headerChk->setObjectName(QString::fromUtf8("headerChk"));
@@ -154,6 +155,10 @@ public:
         senderCmb->insertItems(0, QStringList()
          << QApplication::translate("SenderWindow", "69", 0, QApplication::UnicodeUTF8)
         );
+        receiverCmb->clear();
+        receiverCmb->insertItems(0, QStringList()
+         << QApplication::translate("SenderWindow", "FF", 0, QApplication::UnicodeUTF8)
+        );
         recordBtn->setText(QApplication::translate("SenderWindow", "Record", 0, QApplication::UnicodeUTF8));
         playBtn->setText(QApplication::translate("SenderWindow", "Playback", 0, QApplication::UnicodeUTF8));
         sendAudioBtn->setText(QApplication::translate("SenderWindow", "Send", 0, QApplication::UnicodeUTF8));
@@ -182,6 +187,19 @@ public:
          << QApplication::translate("SenderWindow", "115200", 0, QApplication::UnicodeUTF8)
         );
         msgPriorityLbl->setText(QApplication::translate("SenderWindow", "Message Priority", 0, QApplication::UnicodeUTF8));
+        msgPriorityCmb->clear();
+        msgPriorityCmb->insertItems(0, QStringList()
+         << QApplication::translate("SenderWindow", "0", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "1", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "2", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "3", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "4", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "5", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "6", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "7", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "8", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "9", 0, QApplication::UnicodeUTF8)
+        );
         testMenu->setText(QApplication::translate("SenderWindow", "Testing Menu", 0, QApplication::UnicodeUTF8));
         headerChk->setText(QApplication::translate("SenderWindow", "Headers", 0, QApplication::UnicodeUTF8));
         poissonBtn->setText(QApplication::translate("SenderWindow", "Poisson", 0, QApplication::UnicodeUTF8));

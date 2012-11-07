@@ -29,7 +29,7 @@ signals:
     void error(QString err, int code);
     void labelEdit(QString message);
     void messageEdit(QString message);
-    void audioReceived (long lBigBufSize, char * BigBuf);
+    void audioReceived (long lBigBufSize, char * BigBuf, short samplesPerSec);
     void transmitError();
     
 public slots:

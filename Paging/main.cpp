@@ -11,9 +11,8 @@
 #include "senderwindow.h"
 #include "receiverwindow.h"
 
+// include the multi media library
 #pragma comment (lib, "winmm")
-
-
 
 int main(int argc, char *argv[])
 {
@@ -34,8 +33,8 @@ int main(int argc, char *argv[])
     else
     {
         QMessageBox::information(NULL, "Defaulting...", "Defaulting to Sender");
-        r.show();
-        r.StartPoller();
+        s.show();
+        //r.StartPoller();
     }
     /*if(r.isVisible())
     {

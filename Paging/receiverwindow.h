@@ -37,7 +37,7 @@ protected slots:
     void HandleErrors(QString error, int code);
     void HandleLabelChange(QString message);
     void HandleTextChange(QString message);
-    void HandleAudio(long audioSize, char* audio);
+    void HandleAudio(long audioSize, char* audio, short samplesPerSec);
     void HandleTransmitError();
     void UpdateQueueWindow();       // handles updating messages in the textEdit
     void DisplayPhonebook();
@@ -57,6 +57,7 @@ private:
     char GetReceiverId(char lReceiverAdd[3]);
     char GetHammingDistance(char x, char y);
     int displayTree;
+    void PopulatePhonebook();
 
 };
 

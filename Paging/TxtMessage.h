@@ -22,16 +22,17 @@ struct message {
 };
 
 struct Header {
-    long		lSignature;     // must be 0xDEADBEEF
+    long		lSignature;         // must be 0xDEADBEEF
     char		lReceiverAddr[3];	// receiver ID. 0xff=broadcast
-    BYTE		bVersion;		// version 0 = no compression, version ff = huffman
-    long		lDataLength;	// size of message
-    long        lDataUncompressed; //Size of original uncompressed data.
-    BYTE        bSenderAddr;    // sender ID.
-    BYTE        bDataType;      // data type = 0, data is text. data type = ff, data is voice.
-    short       sChecksum;      // checksum value
-    char		bTBD[8];		// to be determined
-    long		lPattern;	// must be 0xaa 0x55 0xaa 0x55
+    BYTE		bVersion;           // version 0 = no compression, version ff = huffman
+    long		lDataLength;        // size of message
+    long        lDataUncompressed;  //Size of original uncompressed data.
+    BYTE        bSenderAddr;        // sender ID.
+    BYTE        bDataType;          // data type = 0, data is text. data type = ff, data is voice.
+    short       sSamplesPerSec;     // samples per second of
+    short       sChecksum;          // checksum value
+    char		bTBD[6];            // to be determined
+    long		lPattern;           // must be 0xaa 0x55 0xaa 0x55
 };
 
 typedef struct Header Header;
