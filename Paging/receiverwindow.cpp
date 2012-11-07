@@ -103,6 +103,8 @@ void ReceiverWindow::HandleTextChange(char chr)
 // fills the audio buffer and displays a message
 void ReceiverWindow::HandleAudio(long audioSize, char* audio, short samplesPerSec)
 {
+    QMessageBox::information(NULL,"Audio Broadcast Received", "You have a new audio message, press 'Audio Messages'");
+
     // If we have previous audio message, free it.
     if (iBigBuf)
         free(iBigBuf);

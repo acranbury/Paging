@@ -123,7 +123,8 @@ void PollingWorker::PollRS232()
                     numBytesToGet = headerBuffer->lDataLength;
                     //emit error (QString ("Receiver ID"),GetReceiverId(headerBuffer->lReceiverAddr));
 
-                    emit error(QString::number(numBytesToGet), 0);
+                    emit error("Bytes to get", numBytesToGet);
+
                     readBuf = (char*)calloc(numBytesToGet,sizeof(char));                    
                     if (readBuf == NULL)
                         emit error(QString("Error mallocing readBuf."), (int)GetLastError());
@@ -131,7 +132,7 @@ void PollingWorker::PollRS232()
                     // get the message
                     if(!ReadFile(hComm, readBuf, numBytesToGet, &dwBytesTransferred, 0))
                          emit error(QString("Error getting the message."), (int)GetLastError());
-                    //emit error(QString("BYTES"), (int)(dwBytesTransferred));
+                    emit error(QString("Bytes gotten"), (int)(dwBytesTransferred));
 
                     unCompressed = readBuf;
 
@@ -148,7 +149,7 @@ void PollingWorker::PollRS232()
                                 emit error(QString("Error malloccing unCompressed."), (int)GetLastError());
                         Huffman_Uncompress((unsigned char*)readBuf, (unsigned char*)unCompressed, headerBuffer->lDataLength, headerBuffer->lDataUncompressed);
                         // For testing purposes.
-                        //emit error (QString("We have a buffer."),0);
+                        emit error (QString("We have an uncompressed buffer."),0);
                     }
 
                     receiveID = GetReceiverId(headerBuffer->lReceiverAddr);
@@ -183,6 +184,7 @@ void PollingWorker::PollRS232()
                     }
                     else
                     {
+                        emit error("audio", 0);
                         // we have audio, emit the data, the length of the data, and the sample rate
                         emit audioReceived(headerBuffer->lDataUncompressed,
                                            unCompressed,

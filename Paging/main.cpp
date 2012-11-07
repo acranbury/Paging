@@ -30,8 +30,8 @@ int main(int argc, char *argv[])
     else
     {
         QMessageBox::information(NULL, "Defaulting...", "Defaulting to Sender");
-        r.show();
-        r.StartPoller();
+        s.show();
+        //r.StartPoller();
     }
     /*if(r.isVisible())
     {
