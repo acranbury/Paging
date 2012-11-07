@@ -28,7 +28,7 @@ signals:
     void finished();
     void error(QString err, int code);
     void labelEdit(QString message);
-    void messageEdit(QString message);
+    void messageEdit(char chr);
     void audioReceived (long lBigBufSize, char * BigBuf, short samplesPerSec);
     void transmitError();
     

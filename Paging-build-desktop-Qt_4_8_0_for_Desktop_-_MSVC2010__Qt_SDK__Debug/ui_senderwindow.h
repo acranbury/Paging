@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'senderwindow.ui'
 **
-** Created: Thu Nov 1 13:16:11 2012
+** Created: Tue Nov 6 21:43:16 2012
 **      by: Qt User Interface Compiler version 4.8.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -52,7 +52,8 @@ public:
     QCheckBox *headerChk;
     QPushButton *poissonBtn;
     QComboBox *compressCmb;
-    QLabel *label;
+    QLabel *compressLbl;
+    QCheckBox *checksumChk;
     QMenuBar *menuBar;
 
     void setupUi(QMainWindow *SenderWindow)
@@ -118,10 +119,11 @@ public:
         msgPriorityCmb->setGeometry(QRect(100, 150, 51, 22));
         testMenu = new QPushButton(centralWidget);
         testMenu->setObjectName(QString::fromUtf8("testMenu"));
+        testMenu->setEnabled(false);
         testMenu->setGeometry(QRect(100, 280, 75, 23));
         headerChk = new QCheckBox(centralWidget);
         headerChk->setObjectName(QString::fromUtf8("headerChk"));
-        headerChk->setGeometry(QRect(180, 280, 70, 17));
+        headerChk->setGeometry(QRect(180, 290, 70, 17));
         headerChk->setChecked(true);
         poissonBtn = new QPushButton(centralWidget);
         poissonBtn->setObjectName(QString::fromUtf8("poissonBtn"));
@@ -129,9 +131,12 @@ public:
         compressCmb = new QComboBox(centralWidget);
         compressCmb->setObjectName(QString::fromUtf8("compressCmb"));
         compressCmb->setGeometry(QRect(280, 80, 69, 22));
-        label = new QLabel(centralWidget);
-        label->setObjectName(QString::fromUtf8("label"));
-        label->setGeometry(QRect(280, 60, 71, 16));
+        compressLbl = new QLabel(centralWidget);
+        compressLbl->setObjectName(QString::fromUtf8("compressLbl"));
+        compressLbl->setGeometry(QRect(280, 60, 71, 16));
+        checksumChk = new QCheckBox(centralWidget);
+        checksumChk->setObjectName(QString::fromUtf8("checksumChk"));
+        checksumChk->setGeometry(QRect(180, 270, 101, 17));
         SenderWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(SenderWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -146,6 +151,14 @@ public:
     void retranslateUi(QMainWindow *SenderWindow)
     {
         SenderWindow->setWindowTitle(QApplication::translate("SenderWindow", "Paging Transmitter", 0, QApplication::UnicodeUTF8));
+        senderCmb->clear();
+        senderCmb->insertItems(0, QStringList()
+         << QApplication::translate("SenderWindow", "69", 0, QApplication::UnicodeUTF8)
+        );
+        receiverCmb->clear();
+        receiverCmb->insertItems(0, QStringList()
+         << QApplication::translate("SenderWindow", "FF", 0, QApplication::UnicodeUTF8)
+        );
         recordBtn->setText(QApplication::translate("SenderWindow", "Record", 0, QApplication::UnicodeUTF8));
         playBtn->setText(QApplication::translate("SenderWindow", "Playback", 0, QApplication::UnicodeUTF8));
         sendAudioBtn->setText(QApplication::translate("SenderWindow", "Send", 0, QApplication::UnicodeUTF8));
@@ -174,6 +187,19 @@ public:
          << QApplication::translate("SenderWindow", "115200", 0, QApplication::UnicodeUTF8)
         );
         msgPriorityLbl->setText(QApplication::translate("SenderWindow", "Message Priority", 0, QApplication::UnicodeUTF8));
+        msgPriorityCmb->clear();
+        msgPriorityCmb->insertItems(0, QStringList()
+         << QApplication::translate("SenderWindow", "0", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "1", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "2", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "3", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "4", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "5", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "6", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "7", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "8", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "9", 0, QApplication::UnicodeUTF8)
+        );
         testMenu->setText(QApplication::translate("SenderWindow", "Testing Menu", 0, QApplication::UnicodeUTF8));
         headerChk->setText(QApplication::translate("SenderWindow", "Headers", 0, QApplication::UnicodeUTF8));
         poissonBtn->setText(QApplication::translate("SenderWindow", "Poisson", 0, QApplication::UnicodeUTF8));
@@ -183,7 +209,8 @@ public:
          << QApplication::translate("SenderWindow", "RLE", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("SenderWindow", "None", 0, QApplication::UnicodeUTF8)
         );
-        label->setText(QApplication::translate("SenderWindow", "Compression", 0, QApplication::UnicodeUTF8));
+        compressLbl->setText(QApplication::translate("SenderWindow", "Compression", 0, QApplication::UnicodeUTF8));
+        checksumChk->setText(QApplication::translate("SenderWindow", "Checksum Error", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
