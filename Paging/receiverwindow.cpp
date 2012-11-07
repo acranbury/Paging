@@ -109,7 +109,9 @@ void ReceiverWindow::HandleAudio(long audioSize, char* audio, short samplesPerSe
     if (iBigBuf)
         free(iBigBuf);
     lBigBufSize = audioSize/2;
-    CharToShort(audio, audioSize, iBigBuf, lBigBufSize);
+    //iBigBuf = (short*)calloc (lBigBufSize,sizeof(short));
+    //CharToShort(audio, audioSize, iBigBuf, lBigBufSize);
+    iBigBuf = (short*) audio;
     g_nSamplesPerSec = (int)samplesPerSec;
     QMessageBox::information(NULL,"Audio Broadcast Received", "You have a new audio message, press 'Audio Messages'");
 }
