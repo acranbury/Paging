@@ -146,7 +146,7 @@ void SenderWindow::SendText()
         // If huffman encoding has been selected, encode it.
         if (!(QString::compare("huffman", ui->compressCmb->itemText(ui->compressCmb->currentIndex()), Qt::CaseInsensitive)))
         {
-            datasize = Huffman_Compress((unsigned char*)originalText, (unsigned char*)textBuf, numChars);
+            datasize = Huffman_Compress((unsigned char*)inBuf, (unsigned char*)textBuf, numChars);
             textBuf[datasize] = NULL;
             msgHeader->bVersion = 0xFF;
         }
