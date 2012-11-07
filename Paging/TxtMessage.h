@@ -3,10 +3,12 @@
 
 #include <Windows.h>
 
-#define LENGTH 140	// Length of message in buffer
-#define UNKNOWN 25	// Unknown purpose
+#define LENGTH      140	// Length of message in buffer
+#define UNKNOWN     25	// Unknown purpose
 #define FORTUNETXT	"FortuneCookies.txt"
+#define PHONEBOOK   "Phonebook.txt"
 #define READMODE	"r"
+#define WRITEMODE   "w"
 #define NEWMSGCODE  "%%"
 #define NUMMSG		15
 #define HEADERSIZE  32

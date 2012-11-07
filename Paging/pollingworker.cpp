@@ -184,7 +184,6 @@ void PollingWorker::PollRS232()
                     }
                     else
                     {
-                        emit error("audio", 0);
                         // we have audio, emit the data, the length of the data, and the sample rate
                         emit audioReceived(headerBuffer->lDataUncompressed,
                                            unCompressed,
