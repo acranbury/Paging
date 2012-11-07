@@ -36,11 +36,7 @@ protected slots:
     void Archive();
     void HandleErrors(QString error, int code);
     void HandleLabelChange(QString message);
-<<<<<<< HEAD
-    void HandleTextChange(char *message);
-=======
     void HandleTextChange(char chr);
->>>>>>> github/master
     void HandleAudio(long audioSize, char* audio, short samplesPerSec);
     void HandleTransmitError();
     void UpdateQueueWindow();       // handles updating messages in the textEdit
