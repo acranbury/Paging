@@ -60,7 +60,7 @@ void ReceiverWindow::StartPoller()
     connect(poller, SIGNAL(error(QString, int)), this, SLOT(HandleErrors(QString, int)));
     connect(poller, SIGNAL(labelEdit(QString)), this, SLOT(HandleLabelChange(QString)));
     connect(poller, SIGNAL(messageEdit(char)), this, SLOT(HandleTextChange(char)));
-    connect(poller, SIGNAL(audioReceived(long,char*)), this, SLOT(HandleAudio(long, char*)));
+    connect(poller, SIGNAL(audioReceived(long,char*,short)), this, SLOT(HandleAudio(long,char*,short)));
     connect(thread, SIGNAL(started()), poller, SLOT(PollRS232()));
     connect(poller, SIGNAL(finished()), thread, SLOT(quit()));
     connect(poller, SIGNAL(finished()), poller, SLOT(deleteLater()));
