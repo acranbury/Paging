@@ -89,8 +89,8 @@ void ReceiverWindow::PopulatePhonebook()
     {
         Item * newItem = (Item*)(malloc (sizeof(Item)));
         int * count = (int*)(malloc (sizeof(int)));
+        newItem->key = currC;
         *count = fgetc(fp);
-        newItem->key = headerBuffer->bSenderAddr;
         newItem->data = count;
         root = BSTInsert(root,newItem);
     }

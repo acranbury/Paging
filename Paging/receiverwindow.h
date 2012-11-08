@@ -59,6 +59,7 @@ private:
     int displayTree;
     void PopulatePhonebook();
     void SavePhonebook();
+    void BSTSave(TreeNode * treeNode, FILE * fp);
 
 };
 
