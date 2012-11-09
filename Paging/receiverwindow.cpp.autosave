@@ -139,7 +139,7 @@ void ReceiverWindow::HandleAudio(long audioSize, char* audio, short samplesPerSe
 
     // If we have previous audio message, free it.
     if (iBigBuf)
-    //    free(iBigBuf);
+        free(iBigBuf);
     lBigBufSize = audioSize;
     iBigBuf = DifferentialExpand(audio, audioSize);
     g_nSamplesPerSec = (int)samplesPerSec;
