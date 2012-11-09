@@ -41,6 +41,7 @@ protected slots:
     void HandleTransmitError();
     void UpdateQueueWindow();       // handles updating messages in the textEdit
     void DisplayPhonebook();
+    void HandleMsgOrder(int i);
 
 
 private:
@@ -60,6 +61,7 @@ private:
     void PopulatePhonebook();
     void SavePhonebook();
     void BSTSave(TreeNode * treeNode, FILE * fp);
+    void PTraverse(Msg * h);
 
 };
 

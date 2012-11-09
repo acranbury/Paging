@@ -194,17 +194,22 @@
     </property>
     <item>
      <property name="text">
-      <string>4000</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
       <string>8000</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>16000</string>
+      <string>11025</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>22050</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>44100</string>
      </property>
     </item>
    </widget>
