@@ -170,6 +170,16 @@ void SenderWindow::SendText()
             datasize = Huffman_Compress((unsigned char*)inBuf, (unsigned char*)textBuf, numChars);
             textBuf[datasize] = NULL;
             msgHeader->bVersion = 0xFF;
+        }else if (!(QString::compare("rle", ui->compressCmb->itemText(ui->compressCmb->currentIndex()), Qt::CaseInsensitive)))
+        {
+            textBuf = RunLengthEncode(inBuf, numChars);
+            datasize = numChars;
+            msgHeader->bVersion = 0xF0;
+        }else
+        {
+            //voiceBuf = (char *)iBigBuf;
+            //datasize = lBigBufSize * 2;
+            msgHeader->bVersion = 0;
         }
 
         // populate header
@@ -234,13 +244,20 @@ void SenderWindow::SendVoice()
         datasize = Huffman_Compress((unsigned char*)iBigBuf, (unsigned char*)voiceBuf, datasize);
         //voiceBuf[datasize] = NULL;
         msgHeader->bVersion = 0xFF;
+    }else if (!(QString::compare("rle", ui->compressCmb->itemText(ui->compressCmb->currentIndex()), Qt::CaseInsensitive)))
+    {
+        voiceBuf = RunLengthEncode((char*)iBigBuf, lBigBufSize);
+        datasize = lBigBufSize * 2;
+        msgHeader->bVersion = 0xF0;
+    }else if (!(QString::compare("differential", ui->compressCmb->itemText(ui->compressCmb->currentIndex()), Qt::CaseInsensitive)))
+    {
+        voiceBuf = DifferentialCompress(iBigBuf, lBigBufSize);
+        datasize = lBigBufSize;
+        msgHeader->bVersion = 0x0F;
     }else
     {
-        QMessageBox::information(NULL, "Error!", "Before Compression.");
-        voiceBuf = (char *)DifferentialCompress(iBigBuf, lBigBufSize);
-        QMessageBox::information(NULL, "Error!", "After Compression.");
+        voiceBuf = (char *)iBigBuf;
         datasize = lBigBufSize * 2;
-        // set up the version first, so if there's compression it's overridden
         msgHeader->bVersion = 0;
     }
 

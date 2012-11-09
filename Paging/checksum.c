@@ -20,5 +20,5 @@ short CalculateChecksum(char *buffer, long bytes)
     }
     sum1 = (sum1 & 0xff) + (sum1 >> 8);
     sum2 = (sum2 & 0xff) + (sum2 >> 8);
-    return sum2 << 8 | sum1;
+    return (sum2 << 8) + sum1;
 }
