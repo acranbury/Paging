@@ -12,7 +12,7 @@ short * DifferentialCompress(short * audio, long length )
     long i;
     int leftover = 0, difference;
 
-    short * buffer = (char *)calloc((length + 1), sizeof(short));
+    short * buffer = (char *)calloc(length, sizeof(short));
 
     for(i = length - 1; i > 0; i--)
     {
@@ -20,14 +20,14 @@ short * DifferentialCompress(short * audio, long length )
         if(difference > UPPERLIMIT)
         {
             leftover = difference - UPPERLIMIT;
-            buffer[i+1] = UPPERLIMIT;
+            buffer[i] = UPPERLIMIT;
         }else if(difference < LOWERLIMIT)
         {
             leftover = difference - LOWERLIMIT;
-            buffer[i+1] = LOWERLIMIT;
+            buffer[i] = LOWERLIMIT;
         }
 		else
-			buffer[i+1] = difference;
+            buffer[i] = difference;
     }
 
     // get the initial value into the buffer, in two parts
@@ -39,7 +39,7 @@ short * DifferentialCompress(short * audio, long length )
 short * DifferentialExpand(short *buffer, long length)
 {
     long i;
-    short * audio = (short *)calloc((length - 1), sizeof(short));
+    short * audio = (short *)calloc(length, sizeof(short));
 
     audio[0] = buffer[0];
 
