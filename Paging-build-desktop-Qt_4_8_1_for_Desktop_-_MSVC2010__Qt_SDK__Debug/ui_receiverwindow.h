@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'receiverwindow.ui'
 **
-** Created: Thu Oct 25 18:50:19 2012
+** Created: Fri Nov 9 15:22:43 2012
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -63,14 +63,17 @@ public:
         msgOrderGrp->setObjectName(QString::fromUtf8("msgOrderGrp"));
         msgOrderGrp->addButton(priorityRdoBtn);
         priorityRdoBtn->setObjectName(QString::fromUtf8("priorityRdoBtn"));
+        priorityRdoBtn->setEnabled(false);
         priorityRdoBtn->setGeometry(QRect(10, 30, 61, 17));
         priorityRdoBtn->setChecked(true);
         fifoRdoBtn = new QRadioButton(centralwidget);
         msgOrderGrp->addButton(fifoRdoBtn);
         fifoRdoBtn->setObjectName(QString::fromUtf8("fifoRdoBtn"));
+        fifoRdoBtn->setEnabled(false);
         fifoRdoBtn->setGeometry(QRect(10, 50, 51, 17));
         msOrderLbl = new QLabel(centralwidget);
         msOrderLbl->setObjectName(QString::fromUtf8("msOrderLbl"));
+        msOrderLbl->setEnabled(false);
         msOrderLbl->setGeometry(QRect(10, 10, 81, 16));
         deleteBtn = new QPushButton(centralwidget);
         deleteBtn->setObjectName(QString::fromUtf8("deleteBtn"));
@@ -83,6 +86,7 @@ public:
         msgOptionsLbl->setGeometry(QRect(10, 80, 91, 16));
         archiveBtn = new QPushButton(centralwidget);
         archiveBtn->setObjectName(QString::fromUtf8("archiveBtn"));
+        archiveBtn->setEnabled(false);
         archiveBtn->setGeometry(QRect(10, 160, 75, 23));
         msgNumLbl = new QLabel(centralwidget);
         msgNumLbl->setObjectName(QString::fromUtf8("msgNumLbl"));
@@ -107,6 +111,7 @@ public:
         baudRateLbl->setGeometry(QRect(10, 220, 51, 16));
         pushButton = new QPushButton(centralwidget);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
+        pushButton->setEnabled(false);
         pushButton->setGeometry(QRect(90, 260, 121, 23));
         msgTxt = new QTextEdit(centralwidget);
         msgTxt->setObjectName(QString::fromUtf8("msgTxt"));

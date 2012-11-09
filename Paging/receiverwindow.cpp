@@ -27,7 +27,9 @@ ReceiverWindow::ReceiverWindow(QWidget *parent) :
     connect(ui->archiveBtn, SIGNAL(clicked()), this, SLOT(Archive()));
     connect(ui->readBtn, SIGNAL(clicked()), this, SLOT(UpdateQueueWindow()));
     connect(ui->phoneBookBtn, SIGNAL(clicked()), this, SLOT(DisplayPhonebook()));
-    connect(ui->msgOrderGrp, SIGNAL(buttonClicked(int)), this, SLOT(HandleMsgOrder(int)));
+    //connect(ui->msgOrderGrp, SIGNAL(buttonClicked(int)), this, SLOT(HandleMsgOrder(int)));
+
+    InitQueue();
 
     // open RS232 port
     OpenRS232Port();
@@ -164,10 +166,11 @@ void ReceiverWindow::HandleLabelChange(QString message)
     // clear the text box
     ui->msgTxt->clear();
     // Print all messages in the queue.
-    if(ui->msgOrderGrp->checkedButton() == ui->fifoRdoBtn)
+    Traverse(head);
+    /*if(ui->msgOrderGrp->checkedButton() == ui->fifoRdoBtn)
         Traverse(head);
     else
-        PTraverse(phead);
+        PTraverse(phead);*/
 
 }
 

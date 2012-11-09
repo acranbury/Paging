@@ -30,12 +30,13 @@ struct Header {
     char		lReceiverAddr[3];	// receiver ID. 0xff=broadcast
     BYTE		bVersion;           // version 0 = no compression, version ff = huffman
     long		lDataLength;        // size of message
-    long        lDataUncompressed;  //Size of original uncompressed data.
+    long        lDataUncompressed;  // Size of original uncompressed data.
     BYTE        bSenderAddr;        // sender ID.
     BYTE        bDataType;          // data type = 0, data is text. data type = ff, data is voice.
+    BYTE        bPriority;          // message priority
     short       sSamplesPerSec;     // samples per second of
     short       sChecksum;          // checksum value
-    char		bTBD[6];            // to be determined
+    char		bTBD[5];            // to be determined
     long		lPattern;           // must be 0xaa 0x55 0xaa 0x55
 };
 

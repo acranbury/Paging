@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        QMessageBox::information(NULL, "Defaulting...", "Defaulting to Sender");
+        QMessageBox::information(NULL, "Defaulting...", "Defaulting to Receiver");
         r.show();
         r.StartPoller();
     }

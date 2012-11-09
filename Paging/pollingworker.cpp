@@ -178,6 +178,7 @@ void PollingWorker::PollRS232()
                         newMsg->senderID = headerBuffer->bSenderAddr;
                         newMsg->receiverID = (short)receiveID;
                         newMsg->msgNum = rand() % 100;
+                        newMsg->priority = headerBuffer->bPriority;
                         AddToQueue(newMsg);
 
                         // Check if the senderID has already been created. If not, create one.

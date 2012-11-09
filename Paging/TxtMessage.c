@@ -141,7 +141,7 @@ void AddToQueue (Msg *newMsg) {
 	}	
 	else {							// If there are already other nodes,
 		tail->next = newMsg;		// Make the old tail point to the new tail.
-        curr = phead;
+        /*curr = phead;
         while(curr != NULL)
         {
             if(curr->priority > newMsg->priority)
@@ -165,7 +165,7 @@ void AddToQueue (Msg *newMsg) {
                 }
             }
 
-        }
+        }*/
 	}
 	newMsg->next = NULL;			// Set the new tail to point to the end, NULL.
 	tail = newMsg;					// The new tail is the new message.

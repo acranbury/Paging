@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'senderwindow.ui'
 **
-** Created: Fri Nov 9 11:21:28 2012
+** Created: Fri Nov 9 14:18:39 2012
 **      by: Qt User Interface Compiler version 4.8.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -172,9 +172,10 @@ public:
         addReceiverBtn->setText(QApplication::translate("SenderWindow", "Add Receiver", 0, QApplication::UnicodeUTF8));
         sampleCmb->clear();
         sampleCmb->insertItems(0, QStringList()
-         << QApplication::translate("SenderWindow", "4000", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("SenderWindow", "8000", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("SenderWindow", "16000", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "11025", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "22050", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "44100", 0, QApplication::UnicodeUTF8)
         );
         brdSampleLbl->setText(QApplication::translate("SenderWindow", "Sampling Rate", 0, QApplication::UnicodeUTF8));
         baudRateLbl->setText(QApplication::translate("SenderWindow", "Baud Rate", 0, QApplication::UnicodeUTF8));
