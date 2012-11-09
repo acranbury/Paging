@@ -239,7 +239,7 @@ void SenderWindow::SendVoice()
         QMessageBox::information(NULL, "Error!", "Before Compression.");
         voiceBuf = (char *)DifferentialCompress(iBigBuf, lBigBufSize);
         QMessageBox::information(NULL, "Error!", "After Compression.");
-        datasize = lBigBufSize;
+        datasize = lBigBufSize * 2;
         // set up the version first, so if there's compression it's overridden
         msgHeader->bVersion = 0;
     }
