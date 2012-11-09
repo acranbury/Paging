@@ -456,6 +456,9 @@
     </property>
    </widget>
    <widget class="QCheckBox" name="checksumChk">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>180</x>
