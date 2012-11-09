@@ -3,6 +3,7 @@ extern "C"
 {
 #include "checksum.h"
 #include "bst.h"
+#include "audiocompress.h"
 }
 
 // constructor with current baud rate and checkbox pointer to tell if it should be doing raw or not
@@ -112,83 +113,92 @@ void PollingWorker::PollRS232()
                 if(!(headerBuffer = (Header *)malloc(sizeof(struct Header))))
                         emit error(QString("Error malloccing headerBuffer."), (int)GetLastError());
 
+                // get the header
                 if(!ReadFile(hComm, (BYTE *)headerBuffer, HEADERSIZE, &dwBytesTransferred, 0))
-                    emit error(QString("Error setting up the header buffer."), (int)GetLastError());
+                    emit error(QString("Error getting the header buffer."), (int)GetLastError());
 
-               // emit error(QString("size of header"), (int)(dwBytesTransferred));
+                // get the data length from the header
+                numBytesToGet = headerBuffer->lDataLength;
 
-                // if the header is good, get the length of the message
-                if(headerBuffer->lSignature == 0xDEADBEEF)
+                readBuf = (char*)calloc(numBytesToGet,sizeof(char));
+                if (readBuf == NULL)
+                    emit error(QString("Error mallocing readBuf."), (int)GetLastError());
+
+                // get the message
+                if(!ReadFile(hComm, readBuf, numBytesToGet, &dwBytesTransferred, 0))
+                     emit error(QString("Error getting the message."), (int)GetLastError());
+                emit error(QString("Bytes gotten"), (int)(dwBytesTransferred));
+
+                unCompressed = readBuf;
+
+                // calculate the checksum and compare
+                if(headerBuffer->sChecksum != CalculateChecksum(readBuf, headerBuffer->lDataLength))
                 {
-                    numBytesToGet = headerBuffer->lDataLength;
-                    //emit error (QString ("Receiver ID"),GetReceiverId(headerBuffer->lReceiverAddr));
+                    emit transmitError();
+                    //emit error (QString ("Checksum reports errors"),0);
+                }
 
-                    emit error("Bytes to get", numBytesToGet);
+                if (headerBuffer->bVersion == 0xFF)
+                {
+                    if(!(unCompressed = (char *)calloc(headerBuffer->lDataUncompressed,sizeof(char))))
+                            emit error(QString("Error malloccing unCompressed."), (int)GetLastError());
+                    Huffman_Uncompress((unsigned char*)readBuf, (unsigned char*)unCompressed, headerBuffer->lDataLength, headerBuffer->lDataUncompressed);
+                    // For testing purposes.
+                    emit error (QString("We have a Huffman buffer."),0);
+                }else if (headerBuffer->bVersion == 0xF0)
+                {
+                    if(!(unCompressed = (char *)calloc(headerBuffer->lDataUncompressed,sizeof(char))))
+                            emit error(QString("Error malloccing unCompressed."), (int)GetLastError());
+                    unCompressed = RunLengthDecode(readBuf, headerBuffer->lDataLength);
+                    // For testing purposes.
+                    emit error (QString("We have an RLE buffer."),0);
+                }else if (headerBuffer->bVersion == 0x0F)
+                {
+                    if(!(unCompressed = (char *)calloc(headerBuffer->lDataUncompressed,sizeof(char))))
+                            emit error(QString("Error malloccing unCompressed."), (int)GetLastError());
+                    Huffman_Uncompress((unsigned char*)readBuf, (unsigned char*)unCompressed, headerBuffer->lDataLength, headerBuffer->lDataUncompressed);
+                    // For testing purposes.
+                    emit error (QString("We have a Differential buffer."),0);
+                }
+                else
+                    emit error (QString("We have an uncompressed buffer."),0);
 
-                    readBuf = (char*)calloc(numBytesToGet,sizeof(char));                    
-                    if (readBuf == NULL)
-                        emit error(QString("Error mallocing readBuf."), (int)GetLastError());
+                receiveID = GetReceiverId(headerBuffer->lReceiverAddr);
 
-                    // get the message
-                    if(!ReadFile(hComm, readBuf, numBytesToGet, &dwBytesTransferred, 0))
-                         emit error(QString("Error getting the message."), (int)GetLastError());
-                    emit error(QString("Bytes gotten"), (int)(dwBytesTransferred));
+                if (headerBuffer->bDataType == 0)
+                { // If the data is text.
+                    // create a new message structure and put it on the queue
+                    // not all the header options we need are available - ask Jack!
+                    if(!(newMsg = (Msg *)malloc(sizeof(struct message))))
+                        emit error(QString("Error malloccing newMsg."), (int)GetLastError());
 
-                    unCompressed = readBuf;
+                    strcpy(newMsg->txt, unCompressed);
+                    newMsg->senderID = headerBuffer->bSenderAddr;
+                    newMsg->receiverID = (short)receiveID;
+                    newMsg->msgNum = rand() % 100;
+                    AddToQueue(newMsg);
 
-                    // calculate the checksum and compare
-                    if(headerBuffer->sChecksum != CalculateChecksum(readBuf, headerBuffer->lDataLength))
+                    // Check if the senderID has already been created. If not, create one.
+                    if ((sender = BSTSearch(root, headerBuffer->bSenderAddr))== NULL)
                     {
-                        emit transmitError();
-                        //emit error (QString ("Checksum reports errors"),0);
+                        Item * newItem = (Item*)(malloc (sizeof(Item)));
+                        int * count = (int*)(malloc (sizeof(int)));
+                        *count = 1;
+                        newItem->key = headerBuffer->bSenderAddr;
+                        newItem->data = count;
+                        root = BSTInsert(root,newItem);
                     }
+                    else // If it has been created, increment
+                        *((int*)sender->data) = *((int*)sender->data) + 1;
 
-                    if (headerBuffer->bVersion == 0xFF)
-                    {
-                        if(!(unCompressed = (char *)calloc(headerBuffer->lDataUncompressed,sizeof(char))))
-                                emit error(QString("Error malloccing unCompressed."), (int)GetLastError());
-                        Huffman_Uncompress((unsigned char*)readBuf, (unsigned char*)unCompressed, headerBuffer->lDataLength, headerBuffer->lDataUncompressed);
-                        // For testing purposes.
-                        emit error (QString("We have an uncompressed buffer."),0);
-                    }
-
-                    receiveID = GetReceiverId(headerBuffer->lReceiverAddr);
-
-                    if (headerBuffer->bDataType == 0)
-                    { // If the data is text.
-                        // create a new message structure and put it on the queue
-                        // not all the header options we need are available - ask Jack!
-                        if(!(newMsg = (Msg *)malloc(sizeof(struct message))))
-                            emit error(QString("Error malloccing newMsg."), (int)GetLastError());
-
-                        strcpy(newMsg->txt, unCompressed);
-                        newMsg->senderID = headerBuffer->bSenderAddr;
-                        newMsg->receiverID = (short)receiveID;
-                        newMsg->msgNum = rand() % 100;
-                        AddToQueue(newMsg);
-
-                        // Check if the senderID has already been created. If not, create one.
-                        if ((sender = BSTSearch(root, headerBuffer->bSenderAddr))== NULL)
-                        {
-                            Item * newItem = (Item*)(malloc (sizeof(Item)));
-                            int * count = (int*)(malloc (sizeof(int)));
-                            *count = 1;
-                            newItem->key = headerBuffer->bSenderAddr;
-                            newItem->data = count;
-                            root = BSTInsert(root,newItem);
-                        }
-                        else // If it has been created, increment
-                            *((int*)sender->data) = *((int*)sender->data) + 1;
-
-                        emit labelEdit(QString("Number of Messages: %1").arg(numberOfMessages));
-                    }
-                    else
-                    {
-                        // we have audio, emit the data, the length of the data, and the sample rate
-                        emit audioReceived(headerBuffer->lDataUncompressed,
-                                           unCompressed,
-                                           headerBuffer->sSamplesPerSec);
-                    }
+                    emit labelEdit(QString("Number of Messages: %1").arg(numberOfMessages));
+                }
+                else
+                {
+                    // we have audio, emit the data, the length of the data, and the sample rate
+                    emit audioReceived(headerBuffer->lDataUncompressed,
+                                       unCompressed,
+                                       headerBuffer->sSamplesPerSec);
                 }
             }
             else
