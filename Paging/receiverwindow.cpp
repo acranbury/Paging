@@ -138,13 +138,8 @@ void ReceiverWindow::HandleAudio(long audioSize, char* audio, short samplesPerSe
     QMessageBox::information(NULL,"Audio Broadcast Received", "You have a new audio message, press 'Audio Messages'");
 
     // If we have previous audio message, free it.
-<<<<<<< HEAD
-    if (iBigBuf)
-    //    free(iBigBuf);
-=======
     //if (iBigBuf)
         //free(iBigBuf);
->>>>>>> github/master
     lBigBufSize = audioSize;
     iBigBuf = DifferentialExpand((short*)audio, audioSize);
     g_nSamplesPerSec = (int)samplesPerSec;
