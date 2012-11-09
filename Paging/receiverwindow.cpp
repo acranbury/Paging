@@ -100,6 +100,7 @@ void ReceiverWindow::PopulatePhonebook()
     fclose(fp);
 }
 
+// saves the sender phonebook
 void ReceiverWindow::SavePhonebook()
 {
     FILE *fp;
@@ -148,10 +149,13 @@ void ReceiverWindow::HandleAudio(long audioSize, char* audio, short samplesPerSe
     QMessageBox::information(NULL,"Audio Broadcast Received", "You have a new audio message, press 'Audio Messages'");
 
     // If we have previous audio message, free it.
-    //if (iBigBuf)
-        //free(iBigBuf);
+    if (iBigBuf)
+    {
+        free(iBigBuf);
+        iBigBuf = NULL;
+    }
     lBigBufSize = audioSize / 2;
-    iBigBuf = (short*) audio;//DifferentialExpand(audio, audioSize);
+    iBigBuf = (short*) audio;
     g_nSamplesPerSec = (int)samplesPerSec;
     QMessageBox::information(NULL,"Audio Broadcast Received", "You have a new audio message, press 'Audio Messages'");
 }
@@ -257,7 +261,6 @@ void ReceiverWindow::Playback()
     PlayBuffer( iBigBuf, lBigBufSize );
     //this->SetMsgText(QString("%1\nDone.").arg(this->GetMsgText()));
     ClosePlayback();
-
 }
 
 // get the baud rate from the combo box

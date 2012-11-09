@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'senderwindow.ui'
 **
-** Created: Fri Nov 9 11:22:10 2012
+** Created: Fri Nov 9 15:22:56 2012
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -138,6 +138,7 @@ public:
         compressLbl->setGeometry(QRect(280, 60, 71, 16));
         checksumChk = new QCheckBox(centralWidget);
         checksumChk->setObjectName(QString::fromUtf8("checksumChk"));
+        checksumChk->setEnabled(false);
         checksumChk->setGeometry(QRect(180, 270, 101, 17));
         SenderWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(SenderWindow);

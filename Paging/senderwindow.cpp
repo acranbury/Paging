@@ -34,7 +34,6 @@ SenderWindow::SenderWindow(QWidget *parent) :
 
     // open the rs232 port
     OpenRS232Port();
-
 }
 
 // destructor
@@ -190,6 +189,7 @@ void SenderWindow::SendText()
         msgHeader->lDataUncompressed = numChars;
         msgHeader->bSenderAddr = ui->senderCmb->currentText().toInt();
         msgHeader->lPattern = 0xAA55AA55;
+        msgHeader->bPriority = ui->msgPriorityCmb->currentText().toInt();
         msgHeader->bDataType = 0;
         msgHeader->sChecksum = ui->checksumChk->isChecked() ? CalculateChecksum(textBuf, datasize) + 1 : CalculateChecksum(textBuf, datasize);
 
@@ -223,7 +223,7 @@ void SenderWindow::SendVoice()
     int datasize = 2 * lBigBufSize;
 
     // +320 bytes for the huffman tree
-    voiceBuf = (char*)calloc ((datasize + 320), sizeof(short));
+    voiceBuf = (char*)calloc ((datasize + 320), sizeof(char));
     if (voiceBuf == NULL)
     {
         QMessageBox::information(NULL, "Error!", "Malloccing voiceBuf has failed.");
