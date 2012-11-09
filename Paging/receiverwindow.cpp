@@ -27,6 +27,7 @@ ReceiverWindow::ReceiverWindow(QWidget *parent) :
     connect(ui->archiveBtn, SIGNAL(clicked()), this, SLOT(Archive()));
     connect(ui->readBtn, SIGNAL(clicked()), this, SLOT(UpdateQueueWindow()));
     connect(ui->phoneBookBtn, SIGNAL(clicked()), this, SLOT(DisplayPhonebook()));
+    connect(ui->msgOrderGrp, SIGNAL(buttonClicked(int)), this, SLOT(HandleMsgOrder(int)));
 
     // open RS232 port
     OpenRS232Port();
@@ -72,6 +73,7 @@ void ReceiverWindow::StartPoller()
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
     thread->start();
 }
+
 
 // grabs the saved phonebook
 void ReceiverWindow::PopulatePhonebook()
@@ -126,6 +128,14 @@ void ReceiverWindow::BSTSave(TreeNode * treeRoot, FILE * fp)
     return;
 }
 
+void ReceiverWindow::HandleMsgOrder(int i)
+{
+    if(ui->msgOrderGrp->checkedButton() == ui->fifoRdoBtn)
+        Traverse(head);
+    else
+        PTraverse(phead);
+}
+
 // appends text to the text window
 void ReceiverWindow::HandleTextChange(char chr)
 {
@@ -154,7 +164,11 @@ void ReceiverWindow::HandleLabelChange(QString message)
     // clear the text box
     ui->msgTxt->clear();
     // Print all messages in the queue.
-    Traverse(head);
+    if(ui->msgOrderGrp->checkedButton() == ui->fifoRdoBtn)
+        Traverse(head);
+    else
+        PTraverse(phead);
+
 }
 
 // displays the error of the polling thread
@@ -206,6 +220,14 @@ void ReceiverWindow::Traverse(Msg *h) {
     this->PrintTenChars(h);
     Traverse(h->next);
 }
+
+// Traverse list and print messages in order.
+void ReceiverWindow::PTraverse(Msg *h) {
+    if ( h == NULL ) return;
+    this->PrintTenChars(h);
+    Traverse(h->priorityNext);
+}
+
 // prints the first 10 characters of a message
 void ReceiverWindow::PrintTenChars (Msg * msg){
     //int i;

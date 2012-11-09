@@ -34,7 +34,6 @@ SenderWindow::SenderWindow(QWidget *parent) :
 
     // open the rs232 port
     OpenRS232Port();
-
 }
 
 // destructor

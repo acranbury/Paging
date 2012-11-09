@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'senderwindow.ui'
 **
-** Created: Tue Nov 6 21:43:16 2012
+** Created: Fri Nov 9 11:21:28 2012
 **      by: Qt User Interface Compiler version 4.8.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -61,6 +61,8 @@ public:
         if (SenderWindow->objectName().isEmpty())
             SenderWindow->setObjectName(QString::fromUtf8("SenderWindow"));
         SenderWindow->resize(388, 347);
+        SenderWindow->setMinimumSize(QSize(388, 347));
+        SenderWindow->setMaximumSize(QSize(388, 347));
         centralWidget = new QWidget(SenderWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         msgTxt = new QTextEdit(centralWidget);
@@ -130,7 +132,7 @@ public:
         poissonBtn->setGeometry(QRect(280, 290, 75, 23));
         compressCmb = new QComboBox(centralWidget);
         compressCmb->setObjectName(QString::fromUtf8("compressCmb"));
-        compressCmb->setGeometry(QRect(280, 80, 69, 22));
+        compressCmb->setGeometry(QRect(280, 80, 81, 22));
         compressLbl = new QLabel(centralWidget);
         compressLbl->setObjectName(QString::fromUtf8("compressLbl"));
         compressLbl->setGeometry(QRect(280, 60, 71, 16));
@@ -181,7 +183,9 @@ public:
          << QApplication::translate("SenderWindow", "2400", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("SenderWindow", "4800", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("SenderWindow", "9600", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "14400", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("SenderWindow", "19200", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "28800", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("SenderWindow", "38400", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("SenderWindow", "57600", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("SenderWindow", "115200", 0, QApplication::UnicodeUTF8)
@@ -207,6 +211,7 @@ public:
         compressCmb->insertItems(0, QStringList()
          << QApplication::translate("SenderWindow", "Huffman", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("SenderWindow", "RLE", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("SenderWindow", "Differential", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("SenderWindow", "None", 0, QApplication::UnicodeUTF8)
         );
         compressLbl->setText(QApplication::translate("SenderWindow", "Compression", 0, QApplication::UnicodeUTF8));

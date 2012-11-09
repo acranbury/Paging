@@ -34,7 +34,7 @@ static void SetupFormat( WAVEFORMATEX *wf )
 	wf->wFormatTag = WAVE_FORMAT_PCM;
 	wf->nChannels = 1;
 	wf->nSamplesPerSec = g_nSamplesPerSec;
-	wf->wBitsPerSample = g_nBitsPerSample;
+    wf->wBitsPerSample = g_nBitsPerSample;
 	wf->nBlockAlign = wf->nChannels * (wf->wBitsPerSample/8);
 	wf->nAvgBytesPerSec = wf->nSamplesPerSec * wf->nBlockAlign;
 	wf->cbSize = 0;
