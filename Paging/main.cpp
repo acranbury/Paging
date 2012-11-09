@@ -16,14 +16,14 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    SenderWindow s;
+    //SenderWindow s;
     ReceiverWindow r;
 
     if(argc > 1)
     {
         // get command line arguments
-        if(toupper(*argv[1]) == 'S')
-            s.show();
+        //if(toupper(*argv[1]) == 'S')
+            //s.show();
         if(toupper(*argv[1]) == 'R')
             r.show();
     }
@@ -33,16 +33,5 @@ int main(int argc, char *argv[])
         r.show();
         r.StartPoller();
     }
-    /*if(r.isVisible())
-    {
-        QThread *thread = new QThread;
-        PollingWorker *poller = new PollingWorker(r.GetBaudRate(), r.pmsgLabel, r.ptextEdit, r.pRawData);
-        poller->moveToThread(thread);
-        thread->connect(thread, SIGNAL(started()), poller, SLOT(PollRS232()), Qt::QueuedConnection);
-        poller->connect(poller, SIGNAL(finished()), thread, SLOT(quit()), Qt::QueuedConnection);
-        poller->connect(poller, SIGNAL(finished()), poller, SLOT(deleteLater()), Qt::QueuedConnection);
-        thread->connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()), Qt::QueuedConnection);
-        thread->start();
-    }*/
     return a.exec();
 }

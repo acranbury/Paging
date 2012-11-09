@@ -89,8 +89,8 @@ void ReceiverWindow::PopulatePhonebook()
     {
         Item * newItem = (Item*)(malloc (sizeof(Item)));
         int * count = (int*)(malloc (sizeof(int)));
+        newItem->key = currC;
         *count = fgetc(fp);
-        newItem->key = headerBuffer->bSenderAddr;
         newItem->data = count;
         root = BSTInsert(root,newItem);
     }
@@ -118,7 +118,7 @@ void ReceiverWindow::BSTSave(TreeNode * treeRoot, FILE * fp)
     int numMessages; // Number of times a user sent a message to this receiver.
     if (treeRoot == NULL) return;		// reached leaf
     BSTSave( treeRoot->pLeft, fp );
-    numMessages = *((int*)root->item->data);
+    numMessages = *((int*)treeRoot->item->data);
     fputc(treeRoot->item->key, fp);
     fputc(numMessages, fp);
     BSTSave( treeRoot->pRight, fp );
@@ -186,7 +186,7 @@ void ReceiverWindow::BSTPrint(TreeNode * treeRoot)
     int numMessages; // Number of times a user sent a message to this receiver.
     if (treeRoot == NULL) return;		// reached leaf
     BSTPrint( treeRoot->pLeft );
-    numMessages = *((int*)root->item->data);
+    numMessages = *((int*)treeRoot->item->data);
     ui->msgTxt->append(QString ("Key: %1 # of messages from this user:%2\n").arg(QString::number(treeRoot->item->key),QString::number(numMessages)));
     BSTPrint( treeRoot->pRight );
     return;
