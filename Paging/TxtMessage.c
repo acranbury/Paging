@@ -11,6 +11,7 @@
 
 Msg * tail;
 Msg * head;
+Msg * phead;
 int numberOfMessages = 0;
 
 /*void main(int argc, char *argv[]) {
@@ -124,19 +125,47 @@ void GetMessageFromFile (char *buffer, int iLen) {
 
 void InitQueue (void) {
 	head = NULL;
+    phead = NULL;
 	tail = NULL;
 }
 
 int isQueueEmpty (void) {
-	return (head == NULL);
+    return (head == NULL);
 }
 
 void AddToQueue (Msg *newMsg) {
-	if (head == NULL) {				// If queue is empty, insert new message at the beginning.
-		head = newMsg;				
+    Msg * curr; // for priority insertion
+    if (isQueueEmpty()) {				// If queue is empty, insert new message at the beginning.
+        head = newMsg;
+        phead = newMsg;
 	}	
 	else {							// If there are already other nodes,
 		tail->next = newMsg;		// Make the old tail point to the new tail.
+        curr = phead;
+        while(curr != NULL)
+        {
+            if(curr->priority > newMsg->priority)
+                curr = curr->priorityNext;
+            else if(curr->priorityNext == NULL)
+                curr->priorityNext = newMsg;
+            else
+            {
+                if(curr == phead)
+                {
+                    phead = newMsg;
+                    newMsg->priorityNext = curr;
+                    curr->priorityPrev = newMsg;
+                    curr->priorityNext = NULL;
+                    break;
+                }else
+                {
+                    curr->priorityPrev->priorityNext = newMsg;
+                    newMsg->priorityNext = curr;
+                    break;
+                }
+            }
+
+        }
 	}
 	newMsg->next = NULL;			// Set the new tail to point to the end, NULL.
 	tail = newMsg;					// The new tail is the new message.
@@ -148,7 +177,14 @@ void AddToQueue (Msg *newMsg) {
 Msg *DeleteFromQueue (void) {
 	Msg * temp;
 	if (head == NULL) return (NULL);
-	temp = head;
+
+    // adjust the priority queue
+    if(head == phead)
+        phead = head->priorityNext;
+    else
+        head->priorityPrev->priorityNext = head->priorityNext;
+
+    temp = head;
 	head = head->next;
     numberOfMessages--;
 	return (temp);
