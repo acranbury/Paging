@@ -9,6 +9,7 @@ extern "C"
 #include "TxtMessage.h"
 #include "poisson.h"
 #include "checksum.h"
+#include "audiocompress.h"
 }
 #include <time.h>
 #include "huffman.h"
@@ -235,7 +236,7 @@ void SenderWindow::SendVoice()
         msgHeader->bVersion = 0xFF;
     }else
     {
-        voiceBuf = (char *)iBigBuf;
+        voiceBuf = DifferentialCompress(iBigBuf, lBigBufSize);
         // set up the version first, so if there's compression it's overridden
         msgHeader->bVersion = 0;
     }

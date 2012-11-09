@@ -11,6 +11,7 @@ extern "C"
 #include "TxtMessage.h"
 #include "checksum.h"
 #include "bst.h"
+#include "audiocompress.h"
 }
 
 // constructor to connect all buttons and open the rs 232 port
@@ -139,8 +140,8 @@ void ReceiverWindow::HandleAudio(long audioSize, char* audio, short samplesPerSe
     // If we have previous audio message, free it.
     if (iBigBuf)
         free(iBigBuf);
-    lBigBufSize = audioSize/2;
-    iBigBuf = (short *)audio;
+    lBigBufSize = audioSize;
+    iBigBuf = DifferentialExpand(audio, audioSize);
     g_nSamplesPerSec = (int)samplesPerSec;
     QMessageBox::information(NULL,"Audio Broadcast Received", "You have a new audio message, press 'Audio Messages'");
 }

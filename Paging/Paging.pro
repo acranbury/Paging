@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     poisson.c \
     checksum.c \
     huffman.c \
-    bst.c
+    bst.c \
+    audiocompress.c
 
 
 HEADERS  += senderwindow.h \
@@ -33,7 +34,8 @@ HEADERS  += senderwindow.h \
     poisson.h \
     checksum.h \
     huffman.h \
-    bst.h
+    bst.h \
+    audiocompress.h
 
 
 FORMS    += senderwindow.ui \

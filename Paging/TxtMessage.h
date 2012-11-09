@@ -21,6 +21,8 @@ struct message {
     short msgNum;
     char notSure [UNKNOWN];
     struct message * next;
+    struct message * priorityNext;
+    struct message * priorityPrev;
 };
 
 struct Header {
@@ -41,6 +43,7 @@ typedef struct Header Header;
 typedef struct message Msg;
 extern Msg * tail;
 extern Msg * head;
+extern Msg * phead;
 extern int numberOfMessages;
 
 void GetMessageFromFile(char *buffer,int iLen);
