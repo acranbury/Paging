@@ -3,16 +3,16 @@
 #include <stdlib.h>
 
 #define ESC         0xFF
-#define UPPERLIMIT  127
-#define LOWERLIMIT  -128
+#define UPPERLIMIT  32767
+#define LOWERLIMIT  -32768
 
 // compresses the audio into differences
-char * DifferentialCompress(short * audio, long length )
+short * DifferentialCompress(short * audio, long length )
 {
     long i;
     int leftover = 0, difference;
 
-    char * buffer = (char *)calloc((length + 1), sizeof(char));
+    short * buffer = (char *)calloc((length + 1), sizeof(short));
 
     for(i = length - 1; i > 0; i--)
     {
@@ -31,22 +31,21 @@ char * DifferentialCompress(short * audio, long length )
     }
 
     // get the initial value into the buffer, in two parts
-    buffer[0] = (audio[0] & 0xff00) >> 8;
-    buffer[1] = audio[0] & 0x00ff;
+    buffer[0] = audio[0];
     return buffer;
 }
 
 // expands the differences into audio samples
-short * DifferentialExpand(char *buffer, long length)
+short * DifferentialExpand(short *buffer, long length)
 {
     long i;
     short * audio = (short *)calloc((length - 1), sizeof(short));
 
-    audio[0] = (buffer[0] << 8) + buffer[1];
+    audio[0] = buffer[0];
 
     for(i = 1; i < length; i++)
     {
-        audio[i] = audio[i-1] + buffer[i+1];
+        audio[i] = audio[i-1] + buffer[i];
     }
 
     return audio;
